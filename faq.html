@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clozly.AI - Поддержка и FAQ</title>
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/style_bgg.css"> 
+    <style>
+/* Стили для FAQ-страницы - ИСПОЛЬЗУЮТСЯ ПЕРЕМЕННЫЕ ИЗ style.css */
+        
+        /* Обновляем базовые цвета для элементов, чтобы они соответствовали переменным */
+        .faq-search-input {
+            flex-grow: 1;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-background-color); 
+            color: var(--text-color);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        hr {
+            margin: 40px 0; 
+            border-color: #333;
+            opacity: 0.5;
+        }
+
+        /* --- НОВЫЕ СТИЛИ ДЛЯ ДВУХУРОВНЕВОГО АККОРДЕОНА --- */
+        .main-content {
+            background: linear-gradient(90deg, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3));
+            padding: 15px;
+            border-radius: 25px; 
+        }
+        /* Контейнер ответа/вопроса, который должен сворачиваться */
+        .accordion-content {
+            overflow: hidden; 
+            transition: max-height 0.35s ease-in-out, opacity 0.3s ease-in-out; 
+            max-height: 0; /* Изначально все скрыто */
+            opacity: 0;
+        }
+
+        /* Когда аккордеон открыт */
+        .accordion-toggle.open + .accordion-content,
+        .accordion-content.open {
+            max-height: 1000px;
+            opacity: 1;
+            padding-bottom: 20px; 
+        }
+
+        /* Общий контейнер категории */
+        .faq-category-section {
+            margin-bottom: 20px; 
+            border-radius: 8px;
+            background-color: var(--card-background-color, #0169d8);
+            border: 1px solid var(--border-color, #007bff);
+        }
+
+        /* Стили для элементов, которые служат триггером (Категория/Вопрос) */
+        .accordion-toggle {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px; 
+            transition: background-color 0.2s;
+            user-select: none; 
+        }
+
+        .faq-category-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+
+        /* При наведении на закрытый заголовок */
+        .faq-category-title:hover:not(.open) {
+             background-color: var(--hover-color, #007bff);
+             border-radius: 8px;
+        }
+
+        /* Открытый заголовок категории */
+        .faq-category-title.open {
+            background-color: var(--hover-color, #007bff);
+            border-bottom: 1px solid var(--border-color, #007bff);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .faq-category-questions {
+            padding: 0; 
+        }
+
+        .faq-item {
+            border-top: 1px solid var(--border-color, #007bff);
+        }
+
+        /* Убираем верхний бордер у первого вопроса */
+        .faq-item:first-child {
+            border-top: none;
+        }
+        
+        /* Стили для вопроса (Level 3) */
+        .faq-question {
+            background-color: var(--inner-card-background, #0169d8);
+            font-weight: normal;
+        }
+        
+        .faq-question:hover {
+            background-color: var(--hover-color-light, #007bff);
+        }
+
+        .faq-answer p {
+             margin: 0;
+        }
+        
+        /* Стили для иконки */
+        .icon-toggle {
+            transition: transform 0.3s;
+            font-size: 0.8em;
+            margin-left: 10px;
+            font-family: monospace;
+        }
+
+        /* Поворот иконки для открытых элементов */
+        .accordion-toggle.open .icon-toggle {
+            transform: rotate(90deg);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --font-header: 'Dela Gothic One', sans-serif;
+            --font-main: 'Inter', sans-serif;
+            --accent: #49b7f7;
+            --bg-dark: #020408;
+            --card-bg: rgba(10, 30, 90, 0.3); 
+            --border-accent: #1a4fb0;
+            --sidebar-width: 280px;
+        }
+
+        /* ==================================================
+           1. ГЛОБАЛЬНАЯ СЕТКА СТРАНИЦЫ (ИЗ ANALYTICS)
+           ================================================== */
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: linear-gradient(180deg, #020408 0%, #050c1f 30%, #0e2a5e 70%, #2159b3 100%) !important;
+            background-attachment: fixed !important;
+            color: #ffffff;
+            font-family: var(--font-main);
+            min-height: 100vh;
+            display: flex !important; /* Выстраивает сайдбар и контент в один ряд */
+        }
+
+        /* Обертка .container, которая идет после хедера */
+        body > .container {
+            flex: 1;
+            margin-left: var(--sidebar-width) !important; /* Жесткий сдвиг контента вправо */
+            box-sizing: border-box;
+            width: calc(100% - var(--sidebar-width)) !important;
+            min-width: 0;
+        }
+
+        main {
+            padding: 40px !important;
+            box-sizing: border-box;
+        }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto !important; /* Центрируем блоки контента внутри выделенного пространства */
+            background: transparent;
+            padding: 0;
+        }
+
+        h2 {
+            font-family: var(--font-header);
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+
+        /* ИЗОЛИРОВАННЫЕ СТИЛИ ДЛЯ КНОПОК ВНУТРИ КОНТЕНТА FAQ */
+        main .btn-primary {
+            background: #003ee7 !important;
+            color: #fff !important;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+        main .btn-primary:hover {
+            background: #1a56ff !important;
+            box-shadow: 0 0 20px rgba(0, 62, 231, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* ПОИСКОВАЯ СТРОКА */
+        .faq-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+
+        .faq-search-input {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: #fff;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        .faq-search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* КАРТОЧКИ FAQ */
+        .faq-category-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border-accent);
+            border-radius: 24px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .faq-category-section:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .accordion-toggle {
+            padding: 20px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: background 0.3s;
+        }
+        .faq-category-title {
+            font-family: var(--font-main);
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .faq-question {
+            background: transparent;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .faq-answer {
+            padding: 0 30px 20px 30px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        #submit-question-container {
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 30px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        #submit-question-container h3 {
+            font-family: var(--font-header);
+            margin-bottom: 15px;
+        }
+        textarea.faq-search-input {
+            width: 100%;
+            margin-top: 20px;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+/* 2. СТИЛИЗАЦИЯ САЙДБАРА ПОД ОБЩИЙ ВИД */
+header.main-header {
+    all: unset;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    justify-content: flex-start !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 40px 0 !important;
+    z-index: 10000 !important;
+    box-sizing: border-box !important;
+}
+
+header.main-header h1 {
+    font-family: var(--font-header) !important;
+    font-size: 2rem !important;
+    color: #fff !important;
+    text-align: center !important;
+    margin-bottom: 50px !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+header.main-header .header-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Выравнивание всего содержимого по верхней границе */
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 15px !important;
+    margin: 0 !important;
+}
+
+.site-nav {
+    align-items: stretch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Прижимает всё к началу (вверх) */
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin-top: 0 !important; /* Убираем лишние отступы сверху */
+}
+
+/* КНОПКИ (Ссылки) */
+.site-nav a, .site-nav button {
+    all: unset;
+    padding: 12px 20px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-decoration: none !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    border: 1px solid transparent !important;
+    margin-bottom: 0 !important; /* Гарантируем отсутствие отступов снизу */
+    text-align: center;
+}
+
+/* ВАЖНО: Если элемент должен быть блочным, когда он виден, 
+   но при этом JS может его скрывать (inline style display:none)
+*/
+.site-nav a:not([style*="display: none"]), 
+.site-nav button:not([style*="display: none"]) {
+    display: block; 
+}
+
+.site-nav a:hover, 
+.site-nav a.active, 
+.site-nav button:hover {
+    background: rgba(73, 183, 247, 0.1) !important;
+    color: var(--accent) !important;
+    border: 1px solid rgba(73, 183, 247, 0.2) !important;
+}
+
+/* Специально для кнопки выхода, если она видна */
+#logout-button {
+    color: #ff5f5f !important;
+    margin-top: 10px;
+}
+
+/* Бургер скрываем */
+.burger-menu {
+    display: none !important;
+}
+
+        /* ==================================================
+           3. АДАПТИВНОСТЬ (ДО 768px)
+           ================================================== */
+        @media (max-width: 768px) {
+            body {
+                display: block !important;
+            }
+            body > .container {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            header.main-header {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 70px !important;
+                flex-direction: row !important;
+                padding: 0 20px !important;
+                align-items: center !important;
+            }
+            header.main-header h1 {
+                margin-bottom: 0 !important;
+                font-size: 1.5rem !important;
+            }
+            header.main-header .header-container {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 0 !important;
+            }
+            .site-nav {
+                display: none !important; /* Управляется скриптом бургер-меню */
+            }
+            .faq-controls { flex-direction: column; }
+            h2 { font-size: 1.8rem; }
+            main { padding: 90px 15px 20px 15px !important; }
+        }
+
+     @media (max-width: 768px) {
+    /* Фиксированный хедер */
+    header.main-header {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: 70px !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0 20px !important;
+        background: #020408 !important;
+        z-index: 10001 !important;
+        border-bottom: 1px solid rgba(73, 183, 247, 0.3) !important;
+    }
+
+    /* Выпадающее мобильное меню */
+    .site-nav {
+        display: none !important; /* Скрыто по умолчанию */
+        position: absolute !important;
+        top: 70px !important; /* Сразу под хедером */
+        left: 0 !important;
+        width: 100% !important;
+        background: rgba(2, 4, 8, 0.98) !important;
+        backdrop-filter: blur(15px) !important;
+        flex-direction: column !important;
+        padding: 20px !important;
+        gap: 10px !important;
+        border-bottom: 2px solid var(--accent) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.8) !important;
+    }
+
+    /* Класс, который будет добавлять JS при клике на бургер */
+    .site-nav.mobile-open {
+        display: flex !important;
+    }
+
+    .site-nav a, .site-nav button {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 15px !important;
+        background: rgba(255,255,255,0.05) !important;
+    }
+
+    /* Бургер-иконка */
+    .burger-menu {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        width: 30px !important;
+        height: 30px !important;
+        cursor: pointer !important;
+    }
+
+    .burger-menu span, .burger-menu .bar1, .burger-menu .bar2, .burger-menu .bar3 {
+        display: block !important;
+        width: 100% !important;
+        height: 3px !important;
+        background: #fff !important;
+        border-radius: 2px !important;
+        transition: 0.3s !important;
+    }
+
+    /* Контейнер контента */
+    .analytics-container {
+        margin-left: 0 !important;
+        padding: 100px 15px 30px 15px !important; /* Увеличили отступ сверху */
+        width: 100% !important;
+    }
+
+    h2, .main-card h2 {
+        font-size: 1.7rem !important;
+        margin-top: 10px !important;
+    }
+}   
+
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container header-container">
+            <h1>Clozly</h1>
+
+            <div class="burger-menu" id="burger-menu">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+
+            <nav id="main-nav" class="site-nav">
+                <span id="user-info"></span>
+                    
+                <a href="analytics.html" id="analytics-link">Главная</a>
+                <a href="tarifs.html" id="tarifs-panel-link">Оплата</a>
+                <a href="faq.html" id="tarifs-panel-link">Поддержка</a>
+                <a href="integration.html" id="integration-link">Интеграция</a>
+                <a href="login.html" id="login-link" class="btn-primary" style="display:none;">Вход</a>
+                <a href="register.html" id="register-link" class="btn-primary" style="display:none;">Регистрация</a>
+                <button id="logout-button" style="display:none;">Выход</button>
+                <a href="admin.html" id="admin-panel-link" style="display:none;">Админ Панель</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <main>
+            <div class="main-content">
+            <h2>Поддержка и Частые Вопросы (FAQ)</h2>
+
+            <div class="faq-controls">
+                <input type="text" id="faq-search-input" class="faq-search-input" placeholder="Введите ключевое слово для поиска..." />
+                <button id="faq-search-button" class="btn-primary">Поиск</button>
+            </div>
+
+            <div id="faq-results-container">
+                <p id="faq-loading-status">Загрузка вопросов...</p>
+            </div>
+            
+            <hr>
+
+            <div id="submit-question-container">
+                <h3>Не нашли ответ? Задайте свой вопрос!</h3>
+                <p style="color: #aaa;">Мы получим ваш вопрос, ответим на него и добавим в соответствующую категорию FAQ.</p>
+                
+                <form id="question-submission-form" style="margin-top: 20px;">
+                    <textarea 
+                        id="user-question-text" 
+                        class="faq-search-input" 
+                        rows="4" 
+                        placeholder="Ваш вопрос (будьте максимально подробны)" 
+                        required></textarea>
+                    
+                    <button type="submit" class="btn-primary" id="submit-question-button" style="margin-top: 15px;">
+                        Отправить вопрос
+                    </button>
+                </form>
+            </div>
+        </div>
+        </main>
+
+        <div id="message" class="message-box" style="display:none;"></div>
+    </div>
+    <script src="js/menu.js"></script> 
+    <script src="js/utils.js" type="module"></script>
+    <script src="js/faq_client.js" type="module"></script>
+    <script src="js/auth_client.js" type="module"></script>
+</body>
+</html>

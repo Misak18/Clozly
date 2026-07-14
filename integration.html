@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация API — Clozly</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/style_bgg.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --font-header: 'Dela Gothic One', sans-serif;
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            --accent: #49b7f7;
+            --bg-dark: #020408;
+            --card-bg: rgba(10, 30, 90, 0.3);
+            --code-bg: #070f24;
+            --border-color: rgba(73, 183, 247, 0.2);
+            --text-main: #ffffff;
+            --text-muted: #8a8d91;
+            --font-header: 'Dela Gothic One', sans-serif;
+    --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: linear-gradient(180deg, #020408 0%, #050c1f 30%, #0e2a5e 70%, #2159b3 100%) !important;
+            background-attachment: fixed !important;
+            color: #ffffff;
+            background-repeat: no-repeat;
+            font-family: var(--font-main);
+            min-height: 100vh;
+            display: flex !important; /* Выстраивает сайдбар и контент в один ряд */
+        }
+
+        /* Обертка .container, которая идет после хедера */
+        body > .container {
+            flex: 1;
+            margin-left: var(--sidebar-width) !important; /* Жесткий сдвиг контента вправо */
+            box-sizing: border-box;
+            width: calc(100% - var(--sidebar-width)) !important;
+            min-width: 0;
+        }
+
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-family: var(--font-header);
+            font-size: 2.5rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(73, 183, 247, 0.4);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        /* --- API CONTAINER --- */
+        .api-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow: hidden;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Тэбы / Переключатели */
+        .api-tabs {
+            display: flex;
+            background: rgba(2, 4, 8, 0.6);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 14px;
+            padding: 15px 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            outline: none;
+        }
+
+        .tab-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Панели с кодом */
+        .api-panes {
+            position: relative;
+        }
+
+        .api-pane {
+            display: none;
+            padding: 25px;
+            background: var(--code-bg);
+            position: relative;
+        }
+
+        .api-pane.active {
+            display: block;
+        }
+
+        /* Кнопка скопировать */
+        .copy-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-muted);
+            padding: 8px 14px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            font-family: var(--font-main);
+        }
+
+        .copy-btn:hover {
+            background: rgba(73, 183, 247, 0.15);
+            border-color: var(--accent);
+            color: var(--text-main);
+        }
+
+        /* Блок разметки кода */
+        pre {
+            margin: 0;
+            overflow-x: auto;
+            font-family: var(--font-code);
+            font-size: 14px;
+            color: #e2e8f0;
+        }
+
+        code {
+            font-family: var(--font-code);
+        }
+
+        /* Подсветка синтаксиса (кастомная, легкая) */
+        .keyword { color: #ff79c6; font-weight: bold; }
+        .string { color: #50fa7b; }
+        .builtin { color: #8be9fd; }
+        .comment { color: #6272a4; font-style: italic; }
+        .number { color: #bd93f9; }
+        .function { color: #f1fa8c; }
+        .property { color: #66d9ef; }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .api-tabs {
+                overflow-x: auto;
+            }
+            .tab-btn {
+                padding: 12px 15px;
+                font-size: 13px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+header.main-header {
+    all: unset;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    justify-content: flex-start !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 40px 0 !important;
+    z-index: 10000 !important;
+    box-sizing: border-box !important;
+}
+
+header.main-header h1 {
+    font-family: var(--font-header) !important;
+    font-size: 2rem !important;
+    color: #fff !important;
+    text-align: center !important;
+    margin-bottom: 50px !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+header.main-header .header-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Выравнивание всего содержимого по верхней границе */
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 15px !important;
+    margin: 0 !important;
+}
+
+.site-nav {
+    align-items: stretch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Прижимает всё к началу (вверх) */
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin-top: 0 !important; /* Убираем лишние отступы сверху */
+}
+
+/* КНОПКИ (Ссылки) */
+.site-nav a, .site-nav button {
+    all: unset;
+    padding: 12px 20px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-decoration: none !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    border: 1px solid transparent !important;
+    margin-bottom: 0 !important; /* Гарантируем отсутствие отступов снизу */
+    text-align: center;
+}
+
+/* ВАЖНО: Если элемент должен быть блочным, когда он виден, но при этом JS может его скрывать */
+.site-nav a:not([style*="display: none"]), 
+.site-nav button:not([style*="display: none"]) {
+    display: block; 
+}
+
+.site-nav a:hover, 
+.site-nav a.active, 
+.site-nav button:hover {
+    background: rgba(73, 183, 247, 0.1) !important;
+    color: var(--accent) !important;
+    border: 1px solid rgba(73, 183, 247, 0.2) !important;
+}
+
+#logout-button {
+    color: #ff5f5f !important;
+    margin-top: 10px;
+}
+
+.burger-menu {
+    display: none !important;
+}
+
+/* --- БЛОК API-КЛЮЧА В СТИЛЕ КАРТОЧКИ КОДА --- */
+
+/* Заголовок h2 («Ваш API-ключ») */
+.integration-block-wrapper h2 {
+    font-family: 'Dela Gothic One', sans-serif;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(73, 183, 247, 0.3);
+}
+
+/* Сам контейнер для ключа (Один в один как .api-pane) */
+.api-key-display-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #070f24; /* Точно такой же фон, как у блока кода */
+    border: 1px solid rgba(73, 183, 247, 0.2); /* Тонкая рамка */
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin-bottom: 35px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+}
+
+/* Стили текста токена/ключа */
+#api-key-display {
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #e2e8f0;
+    word-break: break-all;
+}
+
+/* Кнопка «Копировать ключ» (.btn-target) */
+.btn-target {
+    background: rgba(255, 255, 255, 0.05); /* Прозрачный фон как у .copy-btn */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #8a8d91;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    outline: none;
+    margin-left: 20px;
+}
+
+/* Ховер кнопки в стиле кнопки копирования кода */
+.btn-target:hover {
+    background: rgba(73, 183, 247, 0.15);
+    border-color: #49b7f7;
+    color: #ffffff;
+}
+
+/* Адаптив под мобилки */
+@media (max-width: 600px) {
+    .api-key-display-box {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        padding: 20px;
+    }
+    .btn-target {
+        margin-left: 0 !important;
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+    }
+}
+
+/* Адаптация */
+@media (max-width: 768px) {
+    body {
+                display: block !important;
+            }
+            body > .container {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+    header.main-header {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 70px !important;
+                flex-direction: row !important;
+                padding: 0 20px !important;
+                align-items: center !important;
+            }
+            header.main-header h1 {
+                margin-bottom: 0 !important;
+                font-size: 1.5rem !important;
+            }
+            header.main-header .header-container {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 0 !important;
+            }
+            .site-nav {
+                display: none !important; /* Управляется скриптом бургер-меню */
+            }
+}
+
+@media (max-width: 768px) {
+
+    /* Выпадающее мобильное меню */
+    .site-nav {
+        display: none !important; /* Скрыто по умолчанию */
+        position: absolute !important;
+        top: 70px !important; /* Сразу под хедером */
+        left: 0 !important;
+        width: 100% !important;
+        background: rgba(2, 4, 8, 0.98) !important;
+        backdrop-filter: blur(15px) !important;
+        flex-direction: column !important;
+        padding: 20px !important;
+        gap: 10px !important;
+        border-bottom: 2px solid var(--accent) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.8) !important;
+    }
+
+    /* Класс, который будет добавлять JS при клике на бургер */
+    .site-nav.mobile-open {
+        display: flex !important;
+    }
+
+    .site-nav a, .site-nav button {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 15px !important;
+        background: rgba(255,255,255,0.05) !important;
+    }
+
+    /* Бургер-иконка */
+    .burger-menu {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        width: 30px !important;
+        height: 30px !important;
+        cursor: pointer !important;
+    }
+
+    .burger-menu span, .burger-menu .bar1, .burger-menu .bar2, .burger-menu .bar3 {
+        display: block !important;
+        width: 100% !important;
+        height: 3px !important;
+        background: #fff !important;
+        border-radius: 2px !important;
+        transition: 0.3s !important;
+    }
+
+    /* Контейнер контента */
+    .analytics-container {
+        margin-left: 0 !important;
+        padding: 100px 15px 30px 15px !important; /* Увеличили отступ сверху */
+        width: 100% !important;
+    }
+
+    h2, .main-card h2 {
+        font-size: 1.7rem !important;
+        margin-top: 10px !important;
+    }
+}
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container header-container">
+            <h1>Clozly</h1>
+
+            <div class="burger-menu" id="burger-menu">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+
+            <nav id="main-nav" class="site-nav">
+                <span id="user-info"></span>
+                    
+                <a href="analytics.html" id="analytics-link">Главная</a>
+                <a href="tarifs.html" id="tarifs-panel-link">Оплата</a>
+                <a href="faq.html" id="tarifs-panel-link">Поддержка</a>
+                <a href="integration.html" id="integration-link">Интеграция</a>
+                <a href="login.html" id="login-link" class="btn-primary" style="display:none;">Вход</a>
+                <a href="register.html" id="register-link" class="btn-primary" style="display:none;">Регистрация</a>
+                <button id="logout-button" style="display:none;">Выход</button>
+                <a href="admin.html" id="admin-panel-link" style="display:none;">Админ Панель</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Интеграция</h1>
+        <h2>Ваш API-ключ</h2>
+            <div class="api-key-display-box">
+                <span id="api-key-display">Ключ не найден</span>
+                <button id="copy-api-key-button" class="btn-target" style="margin-left: 10px;">Копировать ключ</button>
+            </div>
+        <p class="subtitle">Примеры кода для быстрой интеграции онлайн примерочной в ваш магазин.</p>
+
+        <div class="api-section">
+            <!-- Вкладки с SVG Логотипами -->
+            <div class="api-tabs">
+                <!-- cURL (API URL) -->
+                <button class="tab-btn active" onclick="switchTab(event, 'pane-curl')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                    API
+                </button>
+
+                <!-- Node.js -->
+                <button class="tab-btn" onclick="switchTab(event, 'pane-node')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L3.5 6.91v9.82L12 22l8.5-4.91V6.91L12 2zm4.36 13.56c-.4.57-1.12.97-2.12 1.18-.86.19-2.12.22-3.23-.1-1.35-.38-2.31-1.1-2.87-2.13-.41-.76-.54-1.52-.51-2.58.05-1.42.49-2.48 1.41-3.27.76-.64 1.77-.97 3.01-.97 1.48 0 2.62.46 3.32 1.35.46.59.66 1.25.66 2.18h-1.8c-.01-.5-.12-.86-.34-1.1-.38-.43-1.01-.66-1.85-.66-.88 0-1.53.25-1.95.74-.47.54-.7 1.41-.69 2.57.01 1.09.22 1.9.65 2.41.42.5 1.06.76 1.93.76.71 0 1.26-.14 1.63-.42.27-.2.43-.51.49-.96h-2.1v-1.46h3.9v4.21h-1.45l-.11-.56z"/>
+                    </svg>
+                    Node.js
+                </button>
+
+                <!-- Python -->
+                <button class="tab-btn" onclick="switchTab(event, 'pane-python')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12.12 2c-3.07 0-2.88 1.33-2.88 1.33v1.38h3v.44H8.31s-3.4-.38-3.4 3.4c0 3.77 3 3.65 3.65 3.65h.92v-1.3s-.1-1.77 1.74-1.77h2.89s1.69 0 1.69-1.63V4.94S15.91 2 12.12 2zm-1.63 1.56a.63.63 0 1 1 0 1.25.63.63 0 0 1 0-1.25zM11.88 22c3.07 0 2.88-1.33 2.88-1.33v-1.38h-3v-.44h3.93s3.4.38 3.4-3.4c0-3.77-3-3.65-3.65-3.65h-.92v1.3s.1 1.77-1.74 1.77h-2.89s-1.69 0-1.69 1.63v2.56S8.09 22 11.88 22zm1.63-1.56a.63.63 0 1 1 0-1.25.63.63 0 0 1 0 1.25z"/>
+                    </svg>
+                    Python
+                </button>
+            </div>
+
+            <!-- Контент Панелей -->
+            <div class="api-panes">
+                
+                <!-- API URL / cURL -->
+<div id="pane-curl" class="api-pane active">
+    <button class="copy-btn" onclick="copyCode('curl-code')"><i class="far fa-copy"></i> Скопировать</button>
+    <pre><code id="curl-code"><span class="comment">// 1. Подключение виджета Clozly на ваш сайт</span>
+(<span class="keyword">function</span>() {
+  <span class="comment">// URL из главной страницы(ключ в ссылке и API разные!)</span>
+  <span class="keyword">const</span> <span class="property">BASE_URL</span> = <span class="string">'https://clozly.ru/telegram-tryon.html?tryon_id=ВАШ-КЛЮЧ'</span>;
+
+  <span class="comment">// Кнопка инициализации примерки</span>
+  <span class="keyword">const</span> btn = document.<span class="function">createElement</span>(<span class="string">'button'</span>);
+  btn.className = <span class="string">'clozly-btn'</span>;
+  btn.innerText = <span class="string">'Примерить онлайн'</span>;
+  
+  btn.onclick = () => {
+    <span class="comment">// Считываем артикул товара из URL</span>
+    <span class="comment">//В виде числа передается артикул товара для автоматического выбора товара.</span>
+    <span class="comment">//В личном кабинете важно добавлять этот артикул c помощью редактора товара/при созданий товара</span>
+    <span class="keyword">const</span> path = window.location.pathname.split(<span class="string">'/'</span>);
+    <span class="keyword">const</span> sku = path[path.length - <span class="number">1</span>] || <span class="string">'default'</span>;
+
+    <span class="comment">// Открываем фрейм примерки</span>
+    <span class="keyword">const</span> iframe = document.<span class="function">getElementById</span>(<span class="string">'clozly-iframe'</span>);
+    iframe.src = <span class="string">`</span><span class="keyword">${</span>BASE_URL<span class="keyword">}</span><span class="string">&sku=</span><span class="keyword">${</span>sku<span class="keyword">}</span><span class="string">`</span>;
+    document.<span class="function">getElementById</span>(<span class="string">'clozly-modal'</span>).style.display = <span class="string">'flex'</span>;
+  };
+
+  document.<span class="function">querySelector</span>(<span class="string">'.product-actions'</span>).<span class="function">appendChild</span>(btn);
+})();</code></pre>
+</div>
+
+                <!-- Node.js -->
+<div id="pane-node" class="api-pane">
+    <button class="copy-btn" onclick="copyCode('node-code')"><i class="far fa-copy"></i> Скопировать</button>
+    <pre><code id="node-code"><span class="keyword">import</span> Clozly <span class="keyword">from</span> <span class="string">'clozly'</span>;
+
+<span class="keyword">const</span> clozly = <span class="keyword">new</span> <span class="builtin">Clozly</span>(<span class="string">'ВАШ-КЛЮЧ'</span>);
+
+<span class="keyword">const</span> output = <span class="keyword">await</span> clozly.<span class="function">run</span>({
+  <span class="property">productId</span>: <span class="string">"226"</span>, <span class="comment">// ID товара с вашего сайта</span>
+  <span class="property">userPhotoUrl</span>: <span class="string">"https://clozly.ru/img/False_img.png"</span>, <span class="comment">// исходное фото человека</span>
+  <span class="property">useBackView</span>: <span class="number">false</span> <span class="comment">// вид спереди (false) или сзади (true)</span>
+});
+
+console.<span class="function">log</span>(output);</code></pre>
+</div>
+
+                <!-- Python -->
+                <div id="pane-python" class="api-pane">
+                    <button class="copy-btn" onclick="copyCode('python-code')"><i class="far fa-copy"></i> Скопировать</button>
+                    <pre><code id="python-code"><span class="keyword">import</span> replicate
+
+output = replicate.run(
+    <span class="string">"google/nano-banana:7011d61a0fb7042851cf57662cf0ba808ff3780c85c2763f350c33fb3510e19c"</span>,
+    input={
+        <span class="string">"prompt"</span>: <span class="string">"a banana running a marathon, digital art"</span>
+    }
+)
+<span class="builtin">print</span>(output)</code></pre>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Интерактивный JS сценарий переключения -->
+    <script>
+        function switchTab(event, paneId) {
+            // Удаляем класс active у всех кнопок и панелей
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panes = document.querySelectorAll('.api-pane');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            panes.forEach(pane => pane.classList.remove('active'));
+            
+            // Добавляем класс текущей кнопке и панели
+            event.currentTarget.classList.add('active');
+            document.getElementById(paneId).classList.add('active');
+        }
+
+        function copyCode(codeId) {
+            const codeText = document.getElementById(codeId).innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const btn = document.querySelector(`#${codeId}`).closest('.api-pane').querySelector('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check" style="color: #50fa7b;"></i> Скопировано!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Ошибка копирования: ', err);
+            });
+        }
+    </script>
+    <script src="js/auth_client.js" type="module"></script>
+    <script src="js/menu.js" type="module"></script>
+    <script src="js/index.js" type="module"></script>
+</body>
+</html>

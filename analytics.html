@@ -1,0 +1,2345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аналитика примерок - Clozly</title>
+    <link rel="stylesheet" href="css/analytics.css"> 
+    <link rel="stylesheet" href="css/menu.css"> 
+    <link rel="stylesheet" href="css/style_bgg.css"> 
+    
+    <style>
+/* ПОЛНАЯ СИНХРОНИЗАЦИЯ С ДИЗАЙНОМ 1INDEX.HTML */
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Inter:wght@300;400;600;700&display=swap');
+
+:root {
+    --font-header: 'Dela Gothic One', sans-serif;
+    --font-main: 'Inter', sans-serif;
+    --accent: #49b7f7;
+    --bg-dark: #020408;
+    --card-bg: rgba(10, 30, 90, 0.3); /* Цвет из widget-card лендинга */
+    --sidebar-width: 280px;
+}
+
+/* 1. ТОЧНЫЙ ФОН КАК НА ЛЕНДИНГЕ */
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: linear-gradient(180deg, 
+        #020408 0%,    
+        #050c1f 30%,   
+        #0e2a5e 70%,   
+        #2159b3 100%   
+    ) !important;
+    background-attachment: fixed !important; /* Чтобы фон не скроллился, создавая глубину */
+    background-repeat: no-repeat;
+    color: #ffffff !important;
+    font-family: var(--font-main) !important;
+    min-height: 100vh;
+    display: flex !important;
+}
+
+/* 2. СТИЛИЗАЦИЯ САЙДБАРА ПОД ОБЩИЙ ВИД */
+header.main-header {
+    all: unset;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    justify-content: flex-start !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 40px 0 !important;
+    z-index: 10000 !important;
+    box-sizing: border-box !important;
+}
+
+header.main-header h1 {
+    font-family: var(--font-header) !important;
+    font-size: 2rem !important;
+    color: #fff !important;
+    text-align: center !important;
+    margin-bottom: 50px !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+header.main-header .header-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Выравнивание всего содержимого по верхней границе */
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 15px !important;
+    margin: 0 !important;
+}
+
+.site-nav {
+    align-items: stretch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Прижимает всё к началу (вверх) */
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin-top: 0 !important; /* Убираем лишние отступы сверху */
+}
+
+/* КНОПКИ (Ссылки) */
+.site-nav a, .site-nav button {
+    all: unset;
+    padding: 12px 20px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-decoration: none !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    border: 1px solid transparent !important;
+    margin-bottom: 0 !important; /* Гарантируем отсутствие отступов снизу */
+    text-align: center;
+}
+
+/* ВАЖНО: Если элемент должен быть блочным, когда он виден, 
+   но при этом JS может его скрывать (inline style display:none)
+*/
+.site-nav a:not([style*="display: none"]), 
+.site-nav button:not([style*="display: none"]) {
+    display: block; 
+}
+
+.site-nav a:hover, 
+.site-nav a.active, 
+.site-nav button:hover {
+    background: rgba(73, 183, 247, 0.1) !important;
+    color: var(--accent) !important;
+    border: 1px solid rgba(73, 183, 247, 0.2) !important;
+}
+
+/* Специально для кнопки выхода, если она видна */
+#logout-button {
+    color: #ff5f5f !important;
+    margin-top: 10px;
+}
+
+/* Бургер скрываем */
+.burger-menu {
+    display: none !important;
+}
+
+/* 3. КОНТЕНТНАЯ ОБЛАСТЬ */
+.analytics-container {
+    flex: 1;
+    margin-left: var(--sidebar-width) !important;
+    padding: 60px 40px !important;
+    box-sizing: border-box;
+}
+
+/* ЗАГОЛОВКИ СЕКЦИЙ (Dela Gothic One) */
+h2, .main-card h2, .section-title {
+    font-family: var(--font-header) !important;
+    font-size: 2.5rem !important;
+    margin-bottom: 35px !important;
+    text-transform: uppercase;
+    color: #ffffff !important;
+}
+
+/* 4. КАРТОЧКИ (Дизайн widget-card из лендинга) */
+.stat-card, .analytics-card, .main-card, .card {
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 24px !important;
+    padding: 30px !important;
+    margin-bottom: 25px;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.stat-card:hover, .analytics-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--accent) !important;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+
+.stat-card h3 {
+    font-family: var(--font-main) !important;
+    font-weight: 700;
+    font-size: 1.1rem !important;
+    color: var(--accent) !important;
+    margin-bottom: 10px !important;
+}
+
+.stat-value, #total-tryons-display {
+    font-size: 3rem !important;
+    font-weight: 700 !important;
+    color: #fff;
+}
+
+/* 5. КНОПКИ (Стиль btn-login из лендинга) */
+.btn-primary, .clozly-action-btn, #add-product-btn {
+    all: unset;
+    background: #003ee7 !important;
+    color: #fff !important;
+    padding: 12px 28px !important;
+    border-radius: 12px !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    transition: 0.3s !important;
+    text-align: center;
+}
+
+.btn-primary:hover, .clozly-action-btn:hover {
+    background: #1a56ff !important;
+    box-shadow: 0 0 20px rgba(0, 62, 231, 0.4);
+    transform: scale(1.02);
+}
+
+/* ТАБЫ (Навигация аналитики) */
+.analytics-nav-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.analytics-nav-tabs button {
+    all: unset;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #ccc;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: 600;
+}
+
+.analytics-nav-tabs button.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+}
+
+/* Стилизация таблиц под Glassmorphism */
+table {
+    width: 100% !important;
+    border-spacing: 0 8px !important;
+    border-collapse: separate !important;
+}
+
+th {
+    font-family: var(--font-header);
+    color: var(--accent);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    padding: 15px;
+}
+
+tr td {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+tr td:first-child { border-left: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px 0 0 12px; }
+tr td:last-child { border-right: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0 12px 12px 0; }
+
+/* 6. СКРЫТИЕ ЛИШНИХ ЭЛЕМЕНТОВ (Canvas если не нужен) */
+canvas#gradientCanvas {
+    display: none; /* Используем CSS градиент для точности */
+}
+
+/* Адаптация */
+@media (max-width: 768px) {
+    header.main-header {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 70px !important;
+                flex-direction: row !important;
+                padding: 0 20px !important;
+                align-items: center !important;
+            }
+            header.main-header h1 {
+                margin-bottom: 0 !important;
+                font-size: 1.5rem !important;
+            }
+            header.main-header .header-container {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 0 !important;
+            }
+            .site-nav {
+                display: none !important; /* Управляется скриптом бургер-меню */
+            }
+}
+
+@media (max-width: 768px) {
+
+    /* Выпадающее мобильное меню */
+    .site-nav {
+        display: none !important; /* Скрыто по умолчанию */
+        position: absolute !important;
+        top: 70px !important; /* Сразу под хедером */
+        left: 0 !important;
+        width: 100% !important;
+        background: rgba(2, 4, 8, 0.98) !important;
+        backdrop-filter: blur(15px) !important;
+        flex-direction: column !important;
+        padding: 20px !important;
+        gap: 10px !important;
+        border-bottom: 2px solid var(--accent) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.8) !important;
+    }
+
+    /* Класс, который будет добавлять JS при клике на бургер */
+    .site-nav.mobile-open {
+        display: flex !important;
+    }
+
+    .site-nav a, .site-nav button {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 15px !important;
+        background: rgba(255,255,255,0.05) !important;
+    }
+
+    /* Бургер-иконка */
+    .burger-menu {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        width: 30px !important;
+        height: 30px !important;
+        cursor: pointer !important;
+    }
+
+    .burger-menu span, .burger-menu .bar1, .burger-menu .bar2, .burger-menu .bar3 {
+        display: block !important;
+        width: 100% !important;
+        height: 3px !important;
+        background: #fff !important;
+        border-radius: 2px !important;
+        transition: 0.3s !important;
+    }
+
+    /* Контейнер контента */
+    .analytics-container {
+        margin-left: 0 !important;
+        padding: 100px 15px 30px 15px !important; /* Увеличили отступ сверху */
+        width: 100% !important;
+    }
+
+    h2, .main-card h2 {
+        font-size: 1.7rem !important;
+        margin-top: 10px !important;
+    }
+}
+
+.analytics-container {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 60px 40px !important;
+    box-sizing: border-box;
+    /* Добавьте эти строки: */
+    width: calc(100% - var(--sidebar-width)) !important; 
+    max-width: none !important; /* Убирает любые ограничения, если они были */
+}
+
+.stat-cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important; /* Карточки будут тянуться, пока не влезут в ряд */
+    width: 100% !important;
+    gap: 20px;
+}
+
+.main-card, .analytics-card, .card {
+    width: 100% !important; /* Растягиваем саму карточку */
+    box-sizing: border-box !important;
+}
+
+/* Контейнер-обертка для графиков и топа */
+.stats-layout-row {
+    display: flex;
+    flex-direction: row; /* По умолчанию в ряд (десктоп) */
+    gap: 20px;
+    width: 100%;
+    align-items: stretch;
+    margin-top: 20px;
+}
+
+/* На десктопе: 65% и 35% */
+.stats-layout-row #user-tryon-stats-container {
+    flex: 0 0 65%;
+    width: 65%;
+    min-width: 0;
+}
+
+.stats-layout-row .section-container {
+    flex: 0 0 calc(35% - 20px);
+    width: 35%;
+    min-width: 0;
+}
+
+    /* 7. ЭЛЕМЕНТЫ ФОРМ И ССЫЛКИ */
+    #tryon-link-display {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px dashed var(--accent);
+        color: var(--accent);
+        padding: 20px;
+        border-radius: 15px;
+        font-family: monospace;
+        font-size: 1.1rem;
+        text-align: center;
+        display: block;
+        margin: 20px 0;
+    }
+    #api-key-display {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px dashed var(--accent);
+        color: var(--accent);
+        padding: 20px;
+        border-radius: 15px;
+        font-family: monospace;
+        font-size: 1.1rem;
+        text-align: center;
+        display: block;
+        margin: 20px 0;
+    }
+
+
+/* ==================================================
+   ПОЛНЫЙ ИСПРАВЛЕННЫЙ АДАПТИВ
+   ================================================== */
+
+@media (max-width: 768px) {
+    /* 1. Сброс контейнера: убираем флекс и отступы сайдбара */
+    .analytics-container {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 90px 15px 30px 15px !important; /* 90px чтобы не залезло под фиксированный хедер */
+        display: block !important; /* Убираем flex, чтобы блоки шли просто сверху вниз */
+        box-sizing: border-box !important;
+    }
+
+    /* 2. Растягиваем блоки графиков и таблиц на всю ширину */
+    #user-tryon-stats-container, 
+    #top-tovarov-btn1,
+    #client-Tryon-section1,
+    .main-card, 
+    .analytics-card,
+    .card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 20px !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;
+        float: none !important; /* На всякий случай сбрасываем обтекание */
+    }
+
+    /* 3. Исправляем график (чтобы не был нулевой высоты) */
+    #user-tryon-chart-container {
+        width: 100% !important;
+        height: 300px !important;
+        position: relative !important;
+    }
+
+    /* 4. Таблицы: делаем их прокручиваемыми, иначе они распирают экран */
+    .table-container, 
+    .scrollable-table-container, 
+    .table-responsive {
+        width: 100% !important;
+        overflow-x: auto !important;
+        display: block !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 5. Карточки статистики в одну колонку */
+    .stat-cards {
+        display: grid !important;
+        grid-template-columns: 1fr !important; 
+        gap: 15px !important;
+        width: 100% !important;
+    }
+
+    /* 6. Навигационные табы (кнопки) */
+    .analytics-nav-tabs {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        margin-bottom: 25px !important;
+    }
+
+    #add-product-btn {
+        grid-column: span 2 !important;
+    }
+
+
+        .stats-layout-row {
+        flex-direction: column; /* Перестраиваем в колонку */
+    }
+
+    .stats-layout-row #user-tryon-stats-container,
+    .stats-layout-row .section-container {
+        flex: 0 0 100%; /* Занимают всю ширину */
+        width: 100%;
+    }
+}
+
+/* ==================================================
+   1. РОДИТЕЛЬСКИЙ ОВЕРЛЕЙ (ЗАДНИЙ ФОН НА ВЕСЬ ЭКРАН)
+   ================================================== */
+.modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    /* Плотный темный цвет из вашей палитры для изоляции яркого фона страницы */
+    background: rgba(2, 4, 8, 0.85) !important; 
+    /* Сильное размытие заднего плана для эффекта фокуса на окне */
+    backdrop-filter: blur(12px) !important; 
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 25000 !important; /* Гарантировано поверх сайдбара и шапки */
+    display: none; /* Управляется через JS (flex при открытии) */
+    justify-content: center !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+}
+
+/* ==================================================
+   2. КОНТЕНТ МОДАЛЬНОГО ОКНА (СТИЛЬ LOGIN.HTML С ИЗОЛЯЦИЕЙ)
+   ================================================== */
+.modal-content {
+    /* Комбинация темного слоя и структуры стекла из login.html */
+    background: linear-gradient(135deg, rgba(5, 12, 31, 0.9), rgba(10, 20, 50, 0.85)) !important;
+    backdrop-filter: blur(20px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    
+    /* Граница в стиле login.html */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; 
+    border-radius: 30px !important; 
+    
+    padding: 45px 40px !important;
+    width: 90% !important;
+    max-width: 550px !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    margin: auto !important;
+    color: #ffffff !important;
+    
+    /* Глубокие тени для отрыва от затененного экрана */
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 
+                0 0 50px rgba(73, 183, 247, 0.03) !important;
+                
+    animation: modalAppear 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Анимация появления */
+@keyframes modalAppear {
+    from { 
+        opacity: 0; 
+        transform: scale(0.96) translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0); 
+    }
+}
+
+/* ==================================================
+   3. ВНУТРЕННИЕ ЭЛЕМЕНТЫ УПРАВЛЕНИЯ
+   ================================================== */
+
+/* Заголовок окна */
+.modal-content h2,
+.modal-content h3 {
+    font-family: var(--font-header) !important;
+    font-size: 26px !important;
+    margin-top: 0 !important;
+    margin-bottom: 30px !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* Текстовые метки (Labels) */
+.modal-content label {
+    display: block !important;
+    margin-bottom: 10px !important;
+    margin-top: 20px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-align: left !important;
+}
+
+/* Поля ввода и Селекторы (Синхронизация с input-wrapper из login.html) */
+.modal-content .input-field,
+.modal-content .input-group,
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content select {
+    width: 100% !important;
+    padding: 16px 20px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 14px !important;
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-family: var(--font-main) !important;
+    box-sizing: border-box !important;
+    transition: all 0.3s ease !important;
+    outline: none !important;
+}
+
+/* Состояние фокуса */
+.modal-content .input-field:focus,
+.modal-content .input-group:focus,
+.modal-content input:focus,
+.modal-content select:focus {
+    border-color: var(--accent) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 0 15px rgba(73, 183, 247, 0.2) !important;
+}
+
+/* Стрелочка выпадающего списка */
+.modal-content select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px center !important;
+    background-size: 18px !important;
+    cursor: pointer;
+}
+.modal-content select option {
+    background: #050c1f !important; /* Подложка списка в тон карточки */
+    color: #fff !important;
+}
+
+/* Зоны для загрузки файлов */
+.modal-content .file-with-preview {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    padding: 16px !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px dashed rgba(255, 255, 255, 0.15) !important;
+    border-radius: 14px !important;
+}
+.modal-content .file-with-preview input[type="file"] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0 !important; /* Делаем невидимым, но кликабельным */
+    cursor: pointer !important;
+    z-index: 2 !important;
+}
+
+/* Стилизация текста / имени файла внутри контейнера */
+/* ПРИМЕЧАНИЕ: Если имя файла вставляется напрямую в контейнер или в тег текста, 
+   этот селектор ограничит его ширину и добавит троеточие (...) */
+.modal-content .file-with-preview,
+.modal-content .file-with-preview .file-name-text {
+    font-size: 14px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    
+    /* Магия троеточия */
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    
+}
+
+/* Если файла еще нет, можно добавить псевдоэлемент с подсказкой (опционально) */
+.modal-content .file-with-preview:not(.has-file)::before {
+    content: "Выберите файл..." !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 14px !important;
+}
+.modal-content input[type="file"] {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 14px !important;
+    cursor: pointer;
+}
+
+/* Кнопка сохранения формы (Стиль кнопки .btn-submit из login.html) */
+.modal-content .clozly-action-btn,
+.modal-content button[type="submit"] {
+    all: unset;
+    width: 100% !important;
+    padding: 16px 0 !important;
+    background: linear-gradient(135deg, #2864c8, #004696) !important; /* Точный градиент кнопки входа */
+    border: none !important;
+    border-radius: 14px !important;
+    color: white !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    margin-top: 30px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+}
+
+.modal-content .clozly-action-btn:hover,
+.modal-content button[type="submit"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 25px rgba(0, 70, 150, 0.4) !important;
+    filter: brightness(1.1) !important;
+}
+
+/* Крестик закрытия */
+.modal-content .close-btn {
+    position: absolute !important;
+    top: 25px !important;
+    right: 25px !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 28px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+.modal-content .close-btn:hover {
+    color: #ff5f5f !important;
+    background: rgba(255, 95, 95, 0.1) !important;
+    transform: rotate(90deg);
+}
+
+/* Подсказки (Info Tooltip) */
+.modal-content .info-wrapper {
+    display: inline-flex !important;
+    align-items: center !important;
+    position: relative !important;
+    margin-left: 6px !important;
+}
+.modal-content .info-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 18px !important;
+    height: 18px !important;
+    background: rgba(73, 183, 247, 0.15) !important;
+    color: var(--accent) !important;
+    border: 1px solid rgba(73, 183, 247, 0.3) !important;
+    border-radius: 50% !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
+    cursor: help !important;
+}
+.modal-content .info-tooltip {
+    background: #050c1f !important; /* Полностью непрозрачный темный фон для читаемости подсказок */
+    border: 1px solid rgba(73, 183, 247, 0.3) !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7) !important;
+    width: 290px !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+.modal-content .info-tooltip h4 {
+    color: var(--accent) !important;
+    margin: 0 0 8px 0 !important;
+    font-size: 13px !important;
+}
+
+/* Скроллбар внутри модалки */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+.modal-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* Адаптив */
+@media (max-width: 580px) {
+    .modal-content {
+        padding: 40px 20px 30px 20px !important;
+        width: 95% !important;
+        border-radius: 24px !important;
+    }
+    .modal-content h2, .modal-content h3 { font-size: 22px !important; }
+}
+
+/* Слот для превью изображения (теперь строго СПРАВА) */
+.modal-content .image-preview-slot {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 50px !important;  /* Фиксированный размер */
+    height: 50px !important; /* Фиксированный размер */
+    min-width: 50px !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    z-index: 1 !important;
+    margin-left: auto !important; /* Выталкивает блок максимально вправо */
+    transition: all 0.2s ease !important;
+}
+
+/* Само изображение внутри слота превью */
+.modal-content .image-preview-slot img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important; /* Красиво заполняет квадрат без деформации */
+}
+
+/* Если превью пустое, скрываем границу слота или делаем его незаметным */
+.modal-content .image-preview-slot:empty {
+    border-color: transparent !important;
+    background: transparent !important;
+}
+
+/* Кастомный стиль селектора категорий */
+#garment-category.input-field {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* Стрелочка выпадающего списка */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px center !important;
+    background-size: 18px !important;
+    cursor: pointer !important;
+}
+
+/* Стилизация выпадающего списка вариантов (изоляция от дефолтных светлых системных цветов) */
+#garment-category.input-field option {
+    background: #050c1f !important; /* Глубокий темный фон в тон карточки входа */
+    color: #ffffff !important;      /* Белый читаемый текст */
+    padding: 10px !important;
+}
+
+/* Цвет для заблокированного дефолтного варианта (Placeholder) */
+#garment-category.input-field option:disabled {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* СТИЛИЗАЦИЯ ДЛЯ КАСТОМНОГО ВЫПАДАЮЩЕГО СПИСКА (JS-Кастомизация) */
+.custom-select-wrapper {
+    position: relative;
+    width: 100% !important;
+    margin-bottom: 5px;
+}
+
+/* Скрываем стандартный селектор, который обрабатывается скриптом */
+.hidden-select {
+    display: none !important;
+}
+
+/* Главный видимый триггер (кнопка выбора) */
+.custom-select-trigger {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    width: 100% !important;
+    padding: 16px 20px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 14px !important;
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-family: var(--font-main) !important;
+    box-sizing: border-box !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer;
+}
+
+/* Эффект при наведении и фокусе/открытии */
+.custom-select-wrapper:hover .custom-select-trigger {
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+}
+
+.custom-select-wrapper.open .custom-select-trigger {
+    border-color: var(--accent) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 0 15px rgba(73, 183, 247, 0.2) !important;
+}
+
+/* Иконка стрелочки */
+.custom-select-trigger .arrow {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    transition: transform 0.3s ease;
+}
+
+/* Разворот стрелочки при открытии */
+.custom-select-wrapper.open .custom-select-trigger .arrow {
+    transform: rotate(180deg);
+    color: var(--accent);
+}
+
+/* Контейнер с выпадающими опциями */
+.custom-options {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: #050c1f !important; /* Глубокий темный фон в тон карточки */
+    border: 1px solid rgba(73, 183, 247, 0.3) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+    box-sizing: border-box;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+/* Показ списка при активации класса open */
+.custom-select-wrapper.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Стили отдельных строчек (вариантов выбора) */
+.custom-option {
+    padding: 14px 20px;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.custom-option:first-child {
+    border-top-left-radius: 13px;
+    border-top-right-radius: 13px;
+}
+
+.custom-option:last-child {
+    border-bottom-left-radius: 13px;
+    border-bottom-right-radius: 13px;
+}
+
+/* Эффект наведения на вариант из списка */
+.custom-option:hover {
+    background: rgba(73, 183, 247, 0.15) !important;
+    color: var(--accent) !important;
+}
+
+/* Кастомизация скроллбара внутри списка опций */
+.custom-options::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-options::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-options::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+.custom-options::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* Переопределение позиционирования для подсказки */
+.info-wrapper {
+    position: relative; /* Гарантируем, что подсказка позиционируется относительно иконки */
+    display: inline-block;
+}
+
+.info-tooltip {
+    /* Меняем жесткое смещение влево на привязку к левому краю иконки */
+    left: 0 !important; 
+    transform: none !important; /* Убираем translateX, если он центрировал и уводил блок влево */
+    
+    /* Ограничиваем максимальную ширину, чтобы текст не растягивал модал */
+    width: 280px !important; 
+    max-width: calc(100vw - 40px) !important; /* На случай маленьких экранов */
+    
+    /* Безопасный перенос длинных слов, если они есть */
+    white-space: normal !important; 
+    word-wrap: break-word !important;
+    
+    /* Поднимаем z-index, чтобы окно точно было поверх всех остальных элементов модала */
+    z-index: 1000 !important; 
+}
+
+/* Если стрелочка у тултипа тоже съехала, смещаем её к левому краю (под иконку) */
+.info-tooltip::after,
+.info-tooltip::before {
+    left: 15px !important;
+    transform: none !important;
+}
+
+/* ==========================================
+   ПОЛНАЯ МОБИЛЬНАЯ ВЕРСИЯ (ДО 768px)
+   ========================================== */
+@media (max-width: 768px) {
+    
+    /* --- 1. Блок ссылки и кнопки копирования --- */
+    
+    /* Переводим строку в вертикальный столбец */
+    .api-key-display-box {
+        flex-direction: column !important;
+        align-items: stretch !important; /* Растягиваем элементы по ширине карточки */
+        gap: 15px; /* Задаем отступ между ссылкой и кнопкой */
+    }
+
+    /* Адаптируем блок с самой ссылкой */
+    #tryon-link-display, 
+    #api-key-display {
+        font-size: 0.95rem; /* Немного уменьшаем шрифт, чтобы ссылка влезала */
+        padding: 15px 10px; /* Уменьшаем внутренние отступы */
+        margin: 0; /* Сбрасываем внешние отступы, так как теперь есть gap */
+        word-break: break-all; /* Разрешаем перенос длинной ссылки на новую строку */
+        white-space: normal; /* Разрешаем тексту нормально переноситься */
+    }
+
+    /* Делаем кнопку адаптивной */
+    #copy-tryon-link-button,
+    .api-key-display-box button {
+        width: 100%; /* Кнопка на всю ширину экрана */
+        height: 50px; /* Удобная высота для нажатия пальцем */
+        padding: 0 15px;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+
+
+    /* --- 2. Адаптивная таблица товаров (Карточки) --- */
+
+    /* Отключаем флекс, который может ломать разметку контейнера */
+    .product-list-container {
+        display: block !important;
+        min-height: auto;
+    }
+
+    /* Скрываем заголовки таблицы (thead) */
+    #management-products-table thead {
+        display: none;
+    }
+
+    /* Превращаем саму таблицу, tbody и строки в блочные элементы */
+    #management-products-table, 
+    #management-products-table tbody, 
+    #management-products-table tr {
+        display: block;
+        width: 100%;
+    }
+
+    /* Стилизуем каждую строку как отдельную карточку товара */
+    #management-products-table tr {
+        background: rgba(255, 255, 255, 0.03); /* Легкий фон карточки */
+        border: 1px solid #4b90da;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    /* Превращаем обычные ячейки (td) в строки внутри карточки */
+    #management-products-table td {
+        display: flex;
+        justify-content: center; /* Центрируем весь контент (и текст, и картинки) по горизонтали */
+        align-items: center;     /* Выравниваем по вертикали на одной линии */
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(75, 144, 218, 0.2); /* Тонкий разделитель */
+        font-size: 0.95rem;
+        gap: 10px;               /* Зазор между текстом "ОРИГИНАЛ" и блоком картинок */
+    }
+
+    /* Последняя ячейка в карточке без нижнего бордера */
+    #management-products-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Добавляем текстовые подписи перед данными слева с помощью data-label */
+    #management-products-table td::before {
+        content: attr(data-label); /* Сюда подставится название колонки */
+        font-weight: 600;
+        color: #4b90da;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        margin-right: 0; /* Убираем правый отступ, центровка идет через gap ячейки */
+    }
+
+    /* Кнопки действий делаем на всю ширину для удобства нажатия */
+    #management-products-table td .button {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        font-size: 0.9rem;
+        box-sizing: border-box;
+    }
+    
+    /* Убираем отступы у кнопок, так как они теперь на отдельных строках */
+    .button-spaced {
+        margin-right: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+
+    /* --- 3. Правила для ячейки с картинками (Оригинал) --- */
+
+    /* Настраиваем поведение ссылок с картинками */
+    #management-products-table td .image-preview-link {
+        display: inline-block; /* Картинки стоят строго в один ряд */
+        vertical-align: middle;
+        margin: 0 !important;
+    }
+
+    /* Задаем фиксированный отступ в 5px строго между изображениями */
+    #management-products-table td a.image-preview-link + a.image-preview-link {
+        margin-left: 5px !important; 
+    }
+
+    /* Размер превью картинок на мобильных */
+    .product-image-preview {
+        max-width: 50px;
+        max-height: 50px;
+        display: block;
+    }
+}
+
+/* Сетка для десктопа */
+.limits-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: 20px;
+    margin-bottom: 25px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Подписи полей */
+.limits-grid-container label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: left;
+}
+
+/* Поля ввода в стиле Glassmorphism */
+.limits-grid-container .dynamic-input {
+    width: 100%;
+    height: 52px;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 14px !important;
+    color: #ffffff;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+/* Фокус с использованием вашей переменной --accent */
+.limits-grid-container .dynamic-input:focus {
+    border-color: var(--accent) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 0 15px rgba(73, 183, 247, 0.25) !important;
+}
+
+.limits-grid-container .dynamic-input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Мобильный адаптив */
+@media (max-width: 768px) {
+    .limits-grid-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Находим контейнер внутри секции конфигуратора виджета */
+    #widget-config-section > div[style*="display: flex"] {
+        flex-direction: column !important; /* Перестраиваем блоки в вертикальный стек */
+        gap: 30px !important;              /* Задаем красивый отступ между картой настроек и предпросмотром */
+    }
+
+    /* Сбрасываем жесткую ширину основной карточки настроек, чтобы она заняла 100% экрана */
+    #widget-config-section .main-card {
+        flex: 0 0 100% !important;
+        width: 100% !important;
+    }
+
+    /* Центрируем блок предпросмотра на мобильном экране */
+    #widget-config-section div[style*="flex-direction: column"] {
+        width: 100% !important;
+    }
+    #widget-config-section .preview-column {
+        order: 1 !important; /* Меняет визуальный порядок, поднимая блок вверх */
+        flex: 0 0 100% !important;
+        width: 100% !important;
+        align-items: center !important;
+        margin-bottom: 10px; /* Небольшой отступ снизу перед настройками */
+    }
+
+    /* ЛЕВАЯ КОЛОНКА (Настройки и лимиты): Встает строго ПОД предпросмотром */
+    #widget-config-section .settings-column {
+        order: 2 !important; /* Уходит вниз */
+        flex: 0 0 100% !important;
+        width: 100% !important;
+    }
+}
+@media (max-width: 1024px) {
+    /* Переключаем главный контейнер в вертикальный стек на планшетах и мобилках */
+    #widget-config-section .config-wrapper {
+        flex-direction: column !important;
+        gap: 40px !important;
+    }
+    
+    /* Обе колонки растягиваются на 100% ширины экрана */
+    #widget-config-section .settings-column,
+    #widget-config-section .preview-column {
+        flex: 0 0 100% !important;
+        width: 100% !important;
+    }
+    
+    /* Центрируем телефон на мобилке, чтобы он не уезжал вбок */
+    #widget-config-section .preview-column {
+        align-items: center !important;
+    }
+}
+
+@media (max-width: 550px) {
+    /* Внутри карточек на мелких телефонах перестраиваем сетку инпутов в 1 колонку */
+    #widget-config-section [style*="display: grid"] {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    #widget-config-section .limits-grid-container .form-group {
+        grid-column: span 1 !important;
+    }
+}
+
+/* Стили для плавной работы кастомного свитча и появления тултипа */
+.clozly-slider::before {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+input:checked + .clozly-slider {
+    background-color: rgba(63, 94, 255, 0.3); /* Светло-синий фон подложки */
+    border-color: #3f5eff; /* Ярко-синий бордер */
+}
+input:checked + .clozly-slider::before {
+    transform: translateX(26px);
+    background-color: #3f5eff; /* Синий кружок при активации */
+}
+.info-tooltip-container:hover .info-tooltip-text {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* ==========================================
+   СТИЛИ ДЛЯ БЛОКА ПРОБНОГО ПЕРИОДА
+   ========================================== */
+.trial-block-container {
+    width: 100%;
+    margin: 15px 0 25px 0;
+    background: rgba(10, 30, 90, 0.15);
+    border: 1px solid rgba(73, 183, 247, 0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease-in-out;
+    animation: trialFadeIn 0.5s ease-out forwards;
+}
+
+.trial-state-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+@keyframes trialFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.trial-block-container.hidden, 
+.trial-state-layout.hidden {
+    display: none !important;
+}
+
+/* Левая информационная сторона */
+.trial-info-side h3 {
+    margin: 0 0 6px 0;
+    font-family: var(--font-main);
+    font-weight: 600;
+    font-size: 18px;
+    color: #fff;
+}
+
+.trial-description {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+}
+
+/* Правая сторона действий */
+.trial-actions-side {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+/* Кнопка активации в цвете #3f5eff */
+.trial-btn-primary {
+    background-color: #3f5eff;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 15px rgba(63, 94, 255, 0.3);
+}
+
+.trial-btn-primary:hover {
+    background-color: #2b4ad6;
+    transform: translateY(-1px);
+}
+
+.trial-btn-primary:active {
+    transform: translateY(1px);
+}
+
+/* Кнопка закрытия (крестик отказа) */
+.trial-btn-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.trial-btn-close:hover {
+    color: #ff4d4d;
+}
+
+/* Стили активного состояния триала */
+.active-flex {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.trial-success-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 135, 0.4));
+}
+
+.trial-sub-info {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.accent-text {
+    color: #49b7f7;
+    font-weight: 600;
+}
+
+/* Таймер */
+.trial-timer-side {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+}
+
+.timer-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: var(--font-main);
+}
+
+.timer-value {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: bold;
+    color: #00ff87;
+    letter-spacing: 0.5px;
+}
+
+/* Адаптивность для мобилок */
+@media (max-width: 768px) {
+    .trial-state-layout {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .trial-actions-side, .trial-timer-side {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .trial-btn-primary {
+        flex-grow: 1;
+    }
+}
+    </style>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <canvas id="gradientCanvas"></canvas>
+    <script src="js/script_bgg.js" async></script>
+
+    <header class="main-header">
+        <div class="container header-container">
+            <h1>Clozly</h1>
+
+            <div class="burger-menu" id="burger-menu">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+
+            <nav id="main-nav" class="site-nav">
+                <span id="user-info"></span>
+                    
+                <a href="analytics.html" id="analytics-link">Главная</a>
+                <a href="tarifs.html" id="tarifs-panel-link">Оплата</a>
+                <a href="faq.html" id="tarifs-panel-link">Поддержка</a>
+                <a href="integration.html" id="integration-link">Интеграция</a>
+                <a href="login.html" id="login-link" class="btn-primary" style="display:none;">Вход</a>
+                <a href="register.html" id="register-link" class="btn-primary" style="display:none;">Регистрация</a>
+                <button id="logout-button" style="display:none;">Выход</button>
+                <a href="admin.html" id="admin-panel-link" style="display:none;">Админ Панель</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="analytics-container">
+        
+        <div class="analytics-nav-tabs">
+            <button id="show-stats-btn" class="active">Статистика</button>
+            <button id="show-products-btn">Управление Товарами</button>
+            <button id="top-tovarov-like-btn">Топ Лайков</button>
+            <button id="show-config-btn">Настройка виджета</button>
+            <button id="client-Tryon-section">История примерок</button>
+            <button id="add-product-btn" class="btn-primary">Добавить Товар</button>
+        </div>
+
+        <section id="statistics-section" style="display: block;">
+            <div class="main-card">
+                <h2>Общая статистика</h2>
+<div id="trial-promo-block" class="trial-block-container hidden">
+    <div id="trial-offer-state" class="trial-state-layout hidden">
+        <div class="trial-info-side">
+            <div class="trial-title-row">
+                <h3>Пробный период</h3>
+            </div>
+            <p class="trial-description">Подключите примерочную бесплатно на 7 дней и получите 50 генераций на счет бесплатно + отчет о работе</p>
+        </div>
+        <div class="trial-actions-side">
+            <button id="trial-activate-btn" class="trial-btn-primary">Активировать</button>
+            <button id="trial-refuse-btn" class="trial-btn-close" title="Больше не показывать">×</button>
+        </div>
+    </div>
+
+    <div id="trial-active-state" class="trial-state-layout hidden">
+        <div class="trial-info-side active-flex">
+            <svg class="trial-success-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="11" fill="#00ff87"/>
+                <path d="M7 12L10.5 15.5L17 8.5" stroke="#020408" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="trial-active-text">
+                <h3>Пробный период подключен</h3>
+                <p class="trial-sub-info">Доступно: <span id="trial-gens-count" class="accent-text">0</span> генераций</p>
+            </div>
+        </div>
+        <div class="trial-timer-side">
+            <span class="timer-label">таймер:</span>
+            <span id="trial-countdown-timer" class="timer-value">0д 00ч 00м</span>
+        </div>
+    </div>
+</div>
+                <div class="stat-cards">
+                    <!-- 1. Всего генераций (осталось без изменений, только ID для ясности) -->
+                        <div class="stat-card">
+                        <h3>Всего генераций</h3>
+                        <p id="total-tryons-display">0</p>
+                    </div>
+
+                    <!-- 2. Осталось (заменили "на человека") -->
+                    <div class="stat-card">
+                        <h3 class="stat-title">Осталось генераций</h3>
+                        <p class="stat-value" id="remaining-generations-display">0</p>
+                    </div>
+
+                    <!-- 3. Среднее время генерации (новое поле) -->
+                    <div class="stat-card">
+                        <h3 class="stat-title">Среднее время (сек)</h3>
+                        <p class="stat-value" id="avg-generation-time-display">0.0</p>
+                    </div>
+
+                    <!-- 4. Примерок за сегодня -->
+                    <div class="stat-card" data-stat-id="generations-today">
+                        <h3 class="stat-title">Примерок за сегодня</h3>
+                        <p class="stat-value" id="total-generations-today-value">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-api-key-container" class="card mb-4" style="padding: 20px;">
+                <div id="user-tryon-link-container" style="margin-top: 40px;">
+                    <h2>Ссылка для примерки</h2>
+                    <div class="api-key-display-box" style="display: flex; align-items: center; justify-content: space-between;">
+                        <span id="tryon-link-display">Ссылка не найдена</span>
+                        <button id="copy-tryon-link-button" class="btn-target">Копировать ссылку</button>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div id="user-tryon-stats-container" class="analytics-card" style="margin-top: 20px;">
+                <h2 class="section-title">История примерок</h2>
+                <div class="chart-controls">
+                    <label for="user-chart-period-select">Период:</label>
+                    <select id="user-chart-period-select" class="input-field">
+                        <option value="day">Сегодня</option>
+                        <option value="month">Последний месяц</option>
+                        <option value="6month" selected>Последние полгода</option>
+                        <option value="year">Последний год</option>
+                        <option value="all">Все время</option>
+                        <option value="custom">По дням</option>
+                    </select>                        
+                    <div id="user-custom-date-controls" 
+                        style="display: none; margin-top: 15px; align-items: center; gap: 10px; flex-wrap: wrap; display: flex;">
+        
+                        <label for="user-start-date" style="font-weight: 600;">от</label>
+                        <input type="date" id="user-start-date" 
+                            style="padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 6px; background-color: var(--color-input-background); color: var(--color-text-primary); cursor: pointer;">
+        
+                        <label for="user-end-date" style="font-weight: 600;">до</label>
+                        <input type="date" id="user-end-date" 
+                            style="padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 6px; background-color: var(--color-input-background); color: var(--color-text-primary); cursor: pointer; margin-right: 10px;">
+        
+                        <button id="user-products-apply-date-btn" class="btn-primary" 
+                            style="padding: 8px 15px; border-radius: 6px;">Применить</button>
+                    </div>
+                </div>
+                <div id="user-tryon-chart-container" style="height: 400px; width: 100%;">
+                    <canvas id="user-tryon-chart"></canvas>
+                </div>
+            </div>
+            <br>
+            <div class="card mb-4" style="padding: 20px;">
+                <h2 class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px;">
+                    Статистика всех товаров 
+                </h2>
+                <div class="card-body">
+                    <div class="scrollable-table-container">
+                        <div class="table-responsive">
+                            <table id="top-products-table" class="data-table">
+                                <thead>                                        
+                                    <tr>
+                                        <th>Имя товара</th>
+                                        <th>категория</th>
+                                        <th>Изображение</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-container scrollable-table-container">
+            </div>
+            <div class="product-cards-grid" id="stats-products-cards">
+                </div>
+
+            <div id="stats-load-more-container" class="load-more-container">
+                <button id="stats-load-more-btn" class="button secondary" style="display: none;">Загрузить ещё</button>
+            </div>
+        </section>
+        
+        <section id="product-management-section" style="display: none;">
+            <div class="main-card">
+                <h2>Ваши Товары</h2>
+                
+                <div class="product-list-container" id="product-list-container">
+                    <table id="management-products-table">
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Категория</th>
+                                <th>Цена</th>
+                                <th>Оригинал</th>
+                                <th>Действия</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+                <div class="product-cards-grid" id="management-products-cards">
+                    </div>
+
+                <div id="management-load-more-container" class="load-more-container">
+                    <button id="management-load-more-btn" class="button secondary" style="display: none;">Загрузить ещё</button>
+                </div>
+            </div>
+        </section>
+        <section id="top-tovarov-btn1" style="display: none;">
+            <div class="section-container">
+                <div class="card table-container">
+                    <h2 class="section-title">Топ товаров</h2>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Название</th>
+                                <th>Всего Примерок</th>
+                                <th>Изображение</th>
+                            </tr>
+                        </thead>
+                        <tbody id="top-products-table-body">
+                            <tr><td colspan="4">Загрузка данных...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <section id="client-Tryon-section1" style="display:none">
+            <h2>История примерок</h2>
+            <div class="table-container">
+                <table id="tryon-logs-table">
+                    <thead>
+                        <tr>
+                            <th>Дата / Время</th>
+                            <th>Пользователь</th>
+                            <th>Время (сек)</th>
+                            <th>Исходник</th>
+                            <th>Товар</th>
+                            <th>Результат</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tryon-logs-body">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+<section id="widget-config-section" style="display: none; padding: 20px;">
+    <div style="display: flex; gap: 5%; align-self: stretch; justify-content: space-between; width: 100%; max-width: 1400px; margin: 0 auto; line-height: 1;">
+        <div class="settings-column" style="flex: 0 0 65%; display: flex; flex-direction: column; gap: 30px; box-sizing: border-box;">
+            <div class="main-card" style="background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--accent); box-sizing: border-box; margin-bottom: 0px;">
+                <h2 style="font-family: var(--font-header); font-size: 1.2rem; margin-bottom: 20px;">Лимиты генераций</h2>
+                <div class="limits-grid-container">
+                    <div class="form-group">
+                        <label for="cfg-tryon-limit-day">Лимит в день</label>
+                        <input type="number" id="cfg-tryon-limit-day" class="input-field dynamic-input" min="0" placeholder="0 — безлимит">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cfg-tryon-limit-hour">Лимит в час</label>
+                        <input type="number" id="cfg-tryon-limit-hour" class="input-field dynamic-input" min="0" placeholder="0 — безлимит">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cfg-limit-message">Сообщение при достижении лимита</label>
+                        <input type="text" id="cfg-limit-message" class="input-field dynamic-input" placeholder="Вы исчерпали лимит примерок">
+                    </div>
+                </div>
+                <button id="save-widget-limits" class="clozly-action-btn" style="width: 90%; height: 55px; font-size: 1rem;">Сохранить лимиты</button>
+            </div>
+            <div class="main-card" style="background: var(--card-bg); margin-bottom: 0px; padding: 25px; border-radius: 20px; border: 1px solid var(--accent); box-sizing: border-box;">
+                <h2 style="font-family: var(--font-header); font-size: 1.2rem; margin-bottom: 20px;">Внешний вид</h2>
+            
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 5px; opacity: 0.8;">Цвет кнопки</label>
+                        <input type="color" id="primerka-btn-color-a" class="input-field" style="height: 50px; cursor: pointer; padding: 5px;" value="#3f5eff">
+ 
+                    </div>
+
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 5px; opacity: 0.8;">Цвет текста</label>
+                        <input type="color" id="cfg-btn-text" class="input-field" style="height: 50px; cursor: pointer; padding: 5px;" value="#ffffff">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label style="display: block; margin-bottom: 5px; opacity: 0.8;">Фон (Цвет подложки)</label>
+                        <input type="color" id="cfg-bg-color" class="input-field" style="height: 50px; cursor: pointer; padding: 5px;" value="#f9fafb">
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label style="display: block; margin-bottom: 5px; opacity: 0.8;">Цвет текста «Виртуальная примерочная»</label>
+                        <input type="color" id="cfg-btn-text-tryon" class="input-field" style="height: 50px; cursor: pointer; padding: 5px;" value="#111827">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 15px; margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 5px; opacity: 0.8;">Фоновое изображение (Файл)</label>
+                    <input type="file" id="cfg-bg-file" accept="image/*" style="display: none;">
+                    <label for="cfg-bg-file" class="input-field" style="display: block; cursor: pointer; text-align: center; background: rgba(255,255,255,0.05); border: 1px dashed var(--accent);">
+                        <img src="/img/upload.svg" alt="Иконка загрузки" class="upload-icon-field">
+                        <span id="file-label-text">Нажмите, чтобы выбрать фото</span>
+                    </label>
+                    <input type="hidden" id="cfg-bg-img-url" value="">
+                </div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+    <div class="form-group">
+        <label style="display: block; margin-bottom: 5px; opacity: 0.8;">
+            Прозрачность фона: <span id="cfg-bg-opacity-val">100%</span>
+        </label>
+        <input type="range" id="cfg-bg-opacity" min="0" max="100" value="100" class="input-field" style="width: 100%; height: 10px; cursor: pointer;">
+        
+        <div class="form-group" style="margin-top: 25px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <label style="display: block; opacity: 0.8; font-size: 0.95rem; font-weight: 600;">Загрузка примерки</label>
+                <div class="info-tooltip-container" style="position: relative; display: inline-block; cursor: help;">
+                    <span style="font-size: 0.85rem; background: rgba(255,255,255,0.15); border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: bold; border: 1px solid var(--accent);">i</span>
+                    <div class="info-tooltip-text" style="
+                        visibility: hidden;
+                        width: 240px;
+                        background-color: #0b1531;
+                        color: #fff;
+                        text-align: center;
+                        border-radius: 10px;
+                        padding: 10px;
+                        position: absolute;
+                        z-index: 10;
+                        bottom: 125%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        opacity: 0;
+                        transition: opacity 0.3s;
+                        border: 1px solid var(--accent);
+                        font-size: 0.8rem;
+                        line-height: 1.3;
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+                    ">
+                        Включите <b>Clozly Tin</b>, чтобы пользователи могли свайпать карточки вещей во время ожидания генерации. Если выключено — будет показываться обычный спиннер.
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <label class="clozly-switch" style="position: relative; display: inline-block; width: 54px; height: 28px;">
+                    <input type="checkbox" id="cfg-loading-mode-toggle" style="opacity: 0; width: 0; height: 0;">
+                    <span class="clozly-slider" style="
+                        position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+                        background-color: rgba(10, 30, 90, 0.5);
+                        border: 2px solid var(--accent);
+                        transition: .4s; border-radius: 34px;
+                    "></span>
+                </label>
+                <span id="clozly-switch-status-text" style="font-size: 0.9rem; font-weight: bold; color: #fff; opacity: 0.6;">Обычный спиннер</span>
+            </div>
+        </div>
+        </div>
+
+    <div class="form-group">
+        <label style="display: block; margin-bottom: 5px; opacity: 0.8;">
+            Масштаб изображения: <span id="cfg-bg-scale-val">100%</span>
+        </label>
+        <input type="range" id="cfg-bg-scale" min="10" max="200" value="100" class="input-field" style="width: 100%; height: 10px; cursor: pointer;">
+    </div>
+</div>
+
+                <button id="save-widget-config" class="clozly-action-btn" style="width: 90%; height: 55px; font-size: 1rem;">Сохранить конфигурацию</button>
+            </div>
+        </div>
+        <div style=" display: flex; flex-direction: column; align-items: center;">
+            <h3 style="text-align: center; margin-bottom: 15px; opacity: 0.6; font-size: 0.9rem;">Предпросмотр (Real-time)</h3>
+    
+            <div id="preview-container" style="
+                border: 8px solid #1a1a1a; 
+                border-radius: 40px; 
+                width: 100%;
+                max-width: 420px;          /* Максимальная ширина как у телефона */
+                height: 680px;             /* Жесткая базовая высота */
+                max-height: calc(100vw * (580 / 420)); /* Автоматическое уменьшение высоты на мелких экранах */
+                aspect-ratio: 420 / 720;   /* Железное соотношение сторон 420х580 */
+                overflow: hidden; 
+                position: relative; 
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+                background: #000;
+            ">
+                <iframe src="telegram-tryon.html" id="tryon-preview-iframe" style="
+                    width: 100%; 
+                    height: 100%; 
+                    border: none;
+                    display: block;
+                "></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+        <section id="top-tovarov-like-btn1" style="display: none;">
+            <div id="top-liked-products-section" class="section hidden">
+                <h2>Топ товаров по лайкам</h2>
+                <p class="subtitle">Наиболее популярные товары среди пользователей.</p>
+    
+                <div class="controls-bar">
+                    <button id="refresh-top-likes-btn" class="button">Обновить</button>
+                    <label for="top-likes-limit-select">Лимит:</label>
+                    <select id="top-likes-limit-select" class="input-field">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+    
+                <div id="topLikedProductsList" class="grid-container">
+                    <p class="text-center text-secondary">Данные не загружены.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div id="edit-product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" data-modal-close>&times;</span>
+            <h3 id="edit-title">Редактировать товар</h3>
+            <div id="edit-product-message" class="message-box" style="display: none;"></div>
+            <form id="edit-product-form" class="modal-form" enctype="multipart/form-data">
+                <input type="hidden" id="edit-product-id-input" name="product_id">
+                
+                <label for="product-name-edit">Название товара:</label>
+                <input type="text" id="product-name-edit" name="product_name" placeholder="Название товара" class="input-field">
+
+                <label for="product-price-edit">Цена (₽):</label>
+                <input type="number" id="product-price-edit" name="product_price" placeholder="0.00" class="input-field" step="0.01" min="0">
+
+                <label for="product-sku-edit">Артикул:</label>
+                <input type="text" id="product-sku-edit" name="product_sku" placeholder="Артикул" class="input-field">
+
+                <label for="garment-category-edit">Категория:</label>
+                <select id="garment-category-edit" name="garment_category" class="input-field">
+                    <option value="">Выберите категорию</option>
+                    <option value="upper_body">Верхняя одежда</option>
+                    <option value="lower_body">Нижния одежда</option>
+                    <option value="dresses">Платья</option>
+                </select>
+
+                <label for="commerce-image-input-edit">Товар для карточки:</label>
+                <div class="input-field file-input-wrapper">
+                    <input type="file" id="commerce-image-input-edit" name="commerce_image" accept="image/*" class="input-field" >
+                    <div class="edit-preview-container"></div>
+                </div>
+
+                <label for="commerce-image-input-edit">Товар для карточки сзади:</label>
+                <div class="input-field file-input-wrapper">
+                    <input type="file" id="commerce-back-image-input-edit" name="commerce_back_image" accept="image/*" class="input-field" >
+                    <div class="edit-preview-container"></div>
+                </div>
+
+                <label for="commerce-image-input-edit"> Товар для генерации:</label>
+                <div class="input-field file-input-wrapper">
+                    <input type="file" id="vton_commerce-image-input-edit" name="vton_commerce_image" accept="image/*" class="input-field" >
+                    <div class="edit-preview-container"></div>
+                </div>
+                <label for="commerce-image-input-edit">Товар для генерации сзади:</label>
+                <div class="input-field file-input-wrapper">
+                    <input type="file" id="vton_commerce-back-image-input-edit" name="vton_commerce_back_image" accept="image/*" class="input-field" >
+                    <div class="edit-preview-container"></div>
+                </div>
+
+                <button type="submit" id="edit-product-save-btn" class="clozly-action-btn">
+                    <span id="submit-text-edit">Сохранить изменения</span>
+                    <span id="loading-spinner-edit" class="spinner" style="display:none;"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div id="add-product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal-close>&times;</span>
+            <h2>Добавить новый товар</h2>
+            <div id="add-product-message" class="message-box" style="display:none;"></div>
+            <form id="add-product-form">
+                <label for="product_name">Название товара:</label>
+                <input type="text" id="product_name" name="product_name" class="input-field">
+                <label for="product-sku-add">Артикул:</label>
+                <div class="info-wrapper">
+                    <span class="info-icon">i</span>
+                    <div class="info-tooltip">
+                        <h4>Подсказка по Артикулу</h4>
+                        <p>1. Должно быть только целое число, без букв</p>
+                        <p>2. Число должно быть уникальным и только у одного товара (1 число = 1 товар) и числа не должно повторятся</p>
+                        <p>3. Менять число нельзя, только удалить товар и пересоздать его снова</p>
+                    </div>
+                </div>
+                <input type="text" id="product-sku-add" name="product_sku_add" placeholder="Артикул" class="input-field">
+                
+                <label for="garment_category">Категория:</label>
+                <select id="garment-category" name="garment_category" class="input-field">
+                    <option value="" disabled selected>Выберите категорию</option>
+                    <option value="upper_body">Верхняя одежда (куртки, свитера, футболки)</option>
+                    <option value="lower_body">Нижняя одежда (штаны, юбки, шорты)</option>
+                    <option value="dresses">Платья</option>
+                </select>
+                <label for="commerce_image">Товар для карточки (PNG/JPG):</label>
+                <div class="input-field file-with-preview">
+                    <input type="file" id="commerce_image" name="commerce_image" accept="image/png, image/jpeg">
+                    <div class="image-preview-slot"></div>
+                </div>
+                <label for="commerce_back_image">Товар для карточки сзади (PNG/JPG):</label>
+                <div class="input-field file-with-preview">
+                    <input type="file" id="commerce_back_image" name="commerce_back_image" accept="image/png, image/jpeg">
+                    <div class="image-preview-slot"></div>
+                </div>
+                <label for="commerce_vton_image">Товар для генерации (PNG/JPG):</label>
+                <div class="info-wrapper">
+                    <span class="info-icon">i</span>
+                    <div class="info-tooltip">
+                        <h4>Подсказка по добавлению</h4>
+                        <p>1. Освещение должно быть равномерным, без искажений или бликов на одежде.</p>
+                        <p>2. Одежда должна быть основным объектом в кадре, показывая её на той части тела, где она будет носиться.</p>
+                        <p>3. Вещь должна выделяться на фоне по цвету.</p>
+                        <p>4. Логотипы и рисунки должны быть чёткими и легко читаемыми.</p>
+                        <p>5. Снимайте только ту часть тела, на которой находится вещь.</p>
+                        <p>6. Все элементы на одежде должны быть ровными.</p>
+                        <p>7. Качество фото должно быть не менее 1024x756 для хорошей генерации.</p>
+                    </div>
+                </div>
+                <div class="input-field file-with-preview">
+                    <input type="file" id="commerce_vton_image" name="commerce_vton_image" accept="image/png, image/jpeg">
+                    <div class="image-preview-slot"></div>
+                </div>
+
+                <label for="commerce_vton_back_image">Товар для генерации сзади (PNG/JPG):</label>
+                <div class="info-wrapper">
+                    <span class="info-icon">i</span>
+                    <div class="info-tooltip">
+                        <h4>Подсказка по добавлению</h4>
+                        <p>1. Освещение должно быть равномерным, без искажений или бликов на одежде.</p>
+                        <p>2. Одежда должна быть основным объектом в кадре, показывая её на той части тела, где она будет носиться.</p>
+                        <p>3. Вещь должна выделяться на фоне по цвету.</p>
+                        <p>4. Логотипы и рисунки должны быть чёткими и легко читаемыми.</p>
+                        <p>5. Снимайте только ту часть тела, на которой находится вещь.</p>
+                        <p>6. Все элементы на одежде должны быть ровными.</p>
+                        <p>7. Качество фото должно быть не менее 1024x756 для хорошей генерации.</p>
+                    </div>
+                </div>
+                <div class="input-field file-with-preview">
+                    <input type="file" id="commerce_vton_back_image" name="commerce_vton_back_image" accept="image/png, image/jpeg">
+                    <div class="image-preview-slot"></div>
+                </div>
+
+                    <label for="product-price">Цена (руб.):</label>
+                    <input type="number" id="product-price" name="product_price" min="0" step="0.01" placeholder="Введите цену" class="input-group">
+                <button type="submit" id="add-product-submit-btn" class="clozly-action-btn">
+                    <span id="submit-text">Сохранить</span>
+                    <div id="loading-spinner" class="spinner" style="display: none;"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div id="product-chart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" data-modal-close>&times;</span>
+            <h3 id="product-chart-name">График примерок товара</h3>
+        
+            <div class="chart-controls">
+                <label for="chart-period-select">Период:</label>
+                <select id="chart-period-select" class="input-field" style="width: auto;">
+                    <option value="day">Сегодня</option>
+                    <option value="month">Последний месяц</option>
+                    <option value="6month" selected>Последние полгода</option>
+                    <option value="year">Последний год</option>
+                    <option value="all">Все время</option>
+                </select>
+            </div>
+        
+            <div id="product-chart-container" style="height: 400px; width: 100%;">
+                </div>
+        </div>
+    </div>
+    <script src="js/analytics_client.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script src="js/auth_client.js" type="module"></script>
+    <script src="js/index.js" type="module"></script>
+    <script src="js/utils.js" type="module"></script>
+    <script src="js/menu.js"></script> 
+    <script>
+        const MODAL_ID = 'add-product-modal';
+        const TRANSITION_DURATION = 300; // Должно соответствовать CSS transition
+
+        // Глобальная вспомогательная функция для открытия модального окна
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+        }
+        
+        // Глобальная вспомогательная функция для закрытия модального окна
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) { 
+                modal.classList.remove('open');
+            }
+            // Задержка очистки содержимого до завершения анимации закрытия
+            setTimeout(() => {
+                if (id === MODAL_ID) {
+                     // Очистка формы и сообщения
+                     const form = document.getElementById('add-product-form');
+                     if (form) form.reset();
+                     
+                     const messageBox = document.getElementById('add-product-message');
+                     if (messageBox) {
+                         messageBox.style.display = 'none';
+                         messageBox.textContent = '';
+                     }
+                     
+                     const submitText = document.getElementById('submit-text');
+                     if (submitText) submitText.textContent = 'Загрузить и Сгенерировать';
+                     
+                     const loadingSpinner = document.getElementById('loading-spinner');
+                     if (loadingSpinner) loadingSpinner.style.display = 'none';
+                     
+                     const submitBtn = document.getElementById('add-product-submit-btn');
+                     if (submitBtn) submitBtn.disabled = false;
+                }
+            }, TRANSITION_DURATION);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById(MODAL_ID);
+            const addProductBtn = document.getElementById('add-product-btn');
+            
+            // 1. Обработчик для открытия модального окна
+            if (addProductBtn) {
+                addProductBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openModal(MODAL_ID);
+                });
+            }
+            
+            if (modal) {
+                // 2. Закрытие модального окна по клику вне контента
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal || e.target.hasAttribute('data-modal-close')) {
+                        closeModal(MODAL_ID);
+                    }
+                });
+                
+                // 3. Закрытие модального окна по кнопке ESC
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && modal.classList.contains('open')) {
+                        closeModal(MODAL_ID);
+                    }
+                });
+            }
+            
+            // Перепривязываем закрытие по крестику
+            const closeBtn = modal ? modal.querySelector('[data-modal-close]') : null;
+            if (closeBtn) {
+                 closeBtn.addEventListener('click', () => closeModal(MODAL_ID));
+            }
+        });
+    </script>
+    <div id="product-chart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" data-modal-close>&times;</span>
+            <h3 id="product-chart-name">График примерок</h3>
+        
+            <div class="chart-controls">
+                <label for="chart-period-select">Период:</label>
+                <select id="chart-period-select" class="input-field">
+                    <option value="day">Сегодня</option>
+                    <option value="month">Последний месяц</option>
+                    <option value="6month" selected>Последние полгода</option>
+                    <option value="year">Последний год</option>
+                    <option value="all">Все время</option>
+                </select>
+            </div>
+        
+            <div id="product-chart-container" style="height: 400px; width: 100%;">
+                <canvas id="tryon-chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div id="image-viewer-modal" class="modal" style="display: none;">
+        <div class="modal-content-wrapper">
+            <span class="close-button" id="close-viewer" data-modal-close>&times;</span>
+            <img id="full-res-image" src="" alt="Full Resolution" style="width:100%; border-radius: 8px;">
+        </div>
+    </div>
+
+    <script>
+        // Функция для получения значения куки по имени (если её еще нет в этом файле)
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+            return null;
+        }
+
+        // Получаем данные из Cookies вместо localStorage
+        const token = getCookie('token');
+        const tryonId = getCookie('tryonId');
+
+        if (!token) {
+            window.location.replace('/1index.html');
+        }   
+        // Формируем ссылку
+        const fullLink = `https://clozly.ru/telegram-tryon.html?tryon_id=${tryonId || ''}`; 
+
+        // 1. Обновляем текстовый блок в центре страницы
+        const linkDisplay = document.getElementById('tryon-link-display');
+        if (linkDisplay) {
+            linkDisplay.textContent = fullLink;
+        }
+
+        // 2. Обновляем атрибут href у кнопки в меню
+        const menuTryonLink = document.getElementById('tryon-menu-link');
+        if (menuTryonLink) {
+            // Если tryonId нет, можно заблокировать кнопку или вести на главную
+            menuTryonLink.href = tryonId ? fullLink : '#';
+        }
+
+        // 3. Обновляем iframe с учетом дефолтного товара и его SKU
+        const iframe = document.getElementById('tryon-preview-iframe');
+        const userId = getCookie('userId'); // Забираем userId из куки, как ты и сказал
+
+        if (iframe && tryonId) {
+            // Формируем базовую ссылку, которая всегда должна быть
+            let finalIframeUrl = `https://clozly.ru/telegram-tryon.html?tryon_id=${tryonId}`;
+            // Если userId есть в куках, запрашиваем дефолтный товар через тестовый маршрут
+            if (userId && !isNaN(parseInt(userId))) {
+                fetch(`/api/products/default-test/${parseInt(userId)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Проверяем, вернулся ли успешный ответ и есть ли у товара поле sku
+                        if (data && data.success && data.product && data.product.sku) {
+                            // Дописываем &sku=значение к нашей ссылке
+                            finalIframeUrl += `&sku=${data.product.sku}`;
+                        }
+                        // Устанавливаем итоговую ссылку в iframe
+                        iframe.src = finalIframeUrl;
+                    })
+                    .catch(err => {
+                        console.error('Ошибка при получении тестового дефолтного товара:', err);
+                        // В случае сбоя сети или ошибки сервера загружаем хотя бы базовую ссылку
+                        iframe.src = finalIframeUrl;
+                    });
+            } else {
+                // Если userId вдруг нет в куках, просто отдаем базовую ссылку с tryon_id
+                iframe.src = finalIframeUrl;
+            }
+        } else if (iframe) {
+            iframe.src = '#'; // Если отсутствует tryonId
+        }
+    </script>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Находим все инпуты внутри наших новых контейнеров
+    const fileInputs = document.querySelectorAll('#add-product-form input[type="file"], #edit-product-form input[type="file"]');
+
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const previewContainer = this.parentElement.querySelector('.image-preview-slot, .edit-preview-container');
+            if (!previewContainer) return;
+            previewContainer.innerHTML = ''; // Очистка предыдущего превью
+
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    previewContainer.appendChild(img);
+                }
+
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    });
+});
+</script>
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const selects = document.querySelectorAll('select.input-field');
+
+    selects.forEach(select => {
+        // Создаем обертку
+        const wrapper = document.createElement('div');
+        wrapper.className = 'custom-select-wrapper';
+        select.parentNode.insertBefore(wrapper, select);
+        
+        // Создаем триггер (видимое поле)
+        const trigger = document.createElement('div');
+        trigger.className = 'custom-select-trigger';
+        trigger.innerHTML = `<span>${select.options[select.selectedIndex].text}</span> <i class="arrow">▼</i>`;
+        
+        // Создаем контейнер для опций
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = 'custom-options';
+
+        // Наполняем опциями
+        Array.from(select.options).forEach(option => {
+            const customOption = document.createElement('div');
+            customOption.className = 'custom-option';
+            customOption.textContent = option.textContent;
+            customOption.dataset.value = option.value;
+            
+            customOption.addEventListener('click', () => {
+                trigger.querySelector('span').textContent = customOption.textContent;
+                select.value = customOption.dataset.value;
+                wrapper.classList.remove('open');
+                // Вызываем событие change, чтобы работала аналитика/фильтры
+                select.dispatchEvent(new Event('change'));
+            });
+            optionsContainer.appendChild(customOption);
+        });
+
+        wrapper.appendChild(trigger);
+        wrapper.appendChild(optionsContainer);
+        wrapper.appendChild(select);
+        select.classList.add('hidden-select');
+
+        // Открытие/закрытие
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            wrapper.classList.toggle('open');
+        });
+    });
+
+    // Закрытие при клике мимо
+    window.addEventListener('click', () => {
+        document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+    });
+});
+    </script>
+    <script>
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex'; 
+                setTimeout(() => {
+                    modal.classList.add('open');
+                    document.body.classList.add('modal-open'); 
+                }, 10); 
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('open');
+                document.body.classList.remove('modal-open');
+                
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300); 
+            }   
+        }
+
+        // ⭐ КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: ИНИЦИАЛИЗАЦИЯ СЛУШАТЕЛЕЙ ⭐
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Определяем все ID модальных окон
+            const ALL_MODAL_IDS = ['product-chart-modal', 'add-edit-modal', 'edit-product-modal']; 
+    
+            // 2. Перебираем их и привязываем обработчики закрытия
+            ALL_MODAL_IDS.forEach(MODAL_ID => {
+                const modal = document.getElementById(MODAL_ID);
+                
+                if (modal) {
+            
+                    // 2.1. Закрытие по клику на фон
+                    modal.addEventListener('click', (e) => {
+                        // Вызываем closeModal только если клик был на сам фон, а не на контент
+                        if (e.target === modal) { 
+                            closeModal(MODAL_ID);
+                        }
+                    });
+            
+                    // 2.2. Закрытие по клавише ESC
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && modal.classList.contains('open')) {
+                            closeModal(MODAL_ID);
+                        }
+                    });
+            
+                    // 2.3. Закрытие по крестику (data-modal-close)
+                    const closeBtn = modal.querySelector('[data-modal-close]');
+                    if (closeBtn) {
+                        // ⭐ ЭТО ПРИВЯЗЫВАЕТ ФУНКЦИЮ К КНОПКЕ 'X' ⭐
+                        closeBtn.addEventListener('click', (e) => {
+                            e.stopPropagation(); // Останавливаем всплытие, чтобы не сработал обработчик клика по фону
+                            closeModal(MODAL_ID);
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

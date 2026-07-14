@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MYSELF — Wear Your Identity</title>
+    <!-- Подключение шрифта Inter -->
+    <link rel="stylesheet" href="https://fonts.fontsource.org/inter/index.css">
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="css/style-myself.css">
+</head>
+<body>
+
+<!-- Кастомный курсор -->
+<div class="cursor" id="cursor"></div>
+
+<!-- Экран загрузки -->
+<div class="loader" id="loader">
+    <div class="loader-logo">
+        <img src="img/logomyself.png" alt="MYSELF">
+    </div>
+    <div class="loader-text">Wear Your Identity</div>
+    <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- Навигация -->
+<nav id="navbar">
+    <a href="#" class="nav-logo">
+        <img src="img/logomyself.png" alt="MYSELF">
+    </a>
+    <ul class="nav-links">
+        <li><a href="#products">Каталог</a></li>
+        <li><a href="#about">О нас</a></li>
+        <li>
+            <div class="nav-cart" onclick="toggleCart()">
+                <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleMobile()">
+        <span></span><span></span><span></span>
+    </div>
+</nav>
+
+<!-- Мобильное меню -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#products" onclick="toggleMobile()">Каталог</a>
+    <a href="#about" onclick="toggleMobile()">О нас</a>
+    <a href="#" onclick="toggleMobile(); toggleCart();">Корзина</a>
+</div>
+
+<!-- Hero Секция -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+        <div class="hero-badge">Коллекция 2025</div>
+        <h1 class="hero-title">
+            <span class="my">MY</span><span class="self">SELF</span>
+        </h1>
+        <p class="hero-tagline">Wear <span class="highlight">Your</span> Identity</p>
+        <p class="hero-subtitle">Одежда, которая позволяет быть собой. Каждая вещь — это отражение твоей уникальности, твоего стиля, твоего Я.</p>
+        <div class="hero-buttons">
+            <a href="#products" class="btn-primary">Смотреть каталог</a>
+            <a href="#about" class="btn-outline">О бренде</a>
+        </div>
+    </div>
+    <div class="hero-scroll">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+    </div>
+</section>
+
+<!-- Бегущая строка -->
+<div class="marquee">
+    <div class="marquee-track">
+        <span class="marquee-item"><span class="dot"></span>MYSELF</span>
+        <span class="marquee-item"><span class="dot"></span>Wear Your Identity</span>
+        <span class="marquee-item"><span class="dot"></span>Be Yourself</span>
+        <span class="marquee-item"><span class="dot"></span>Urban Style</span>
+        <span class="marquee-item"><span class="dot"></span>Free Shipping</span>
+        <span class="marquee-item"><span class="dot"></span>Premium Quality</span>
+        <span class="marquee-item"><span class="dot"></span>MYSELF</span>
+        <span class="marquee-item"><span class="dot"></span>Wear Your Identity</span>
+        <span class="marquee-item"><span class="dot"></span>Be Yourself</span>
+        <span class="marquee-item"><span class="dot"></span>Urban Style</span>
+        <span class="marquee-item"><span class="dot"></span>Free Shipping</span>
+        <span class="marquee-item"><span class="dot"></span>Premium Quality</span>
+    </div>
+</div>
+
+<!-- Философия бренда -->
+<div class="brand-statement">
+    <div class="reveal">
+        <p class="brand-quote">
+            «Мы не диктуем моду — мы помогаем выразить <span class="my">MY</span><span class="self">SELF</span>. 
+            Одежда — это не ткань, это язык, на котором говорит твоя личность.»
+        </p>
+        <p class="brand-quote-author">— MYSELF Brand Philosophy</p>
+    </div>
+</div>
+
+<!-- Каталог товаров -->
+<section class="products" id="products">
+    <div class="section-header reveal">
+        <span class="section-label">Коллекция</span>
+        <h2 class="section-title">Каталог</h2>
+    </div>
+    <div class="products-grid">
+
+        <!-- Брюки -->
+        <div class="product-card reveal" onclick="openModal('pants')">
+            <div class="product-card-inner">
+                <div class="product-image-wrapper">
+                    <div class="product-tag">New</div>
+                    <img src="img/bruky-myself.png" alt="MYSELF Брюки" loading="lazy">
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Брюки</div>
+                    <div class="product-name">Cargo Pants</div>
+                    <div class="product-price">₽5 990</div>
+                </div>
+                <div class="product-actions">
+                    <button class="btn-tryon" onclick="event.stopPropagation(); openModal('pants');">Примерить онлайн</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Лонгслив -->
+        <div class="product-card reveal" onclick="openModal('longsleeve')">
+            <div class="product-card-inner">
+                <div class="product-image-wrapper">
+                    <div class="product-tag">Bestseller</div>
+                    <div class="longsleeve-toggle">
+                        <button class="toggle-btn active" id="cardToggleFront" onclick="event.stopPropagation(); toggleLongsleeve('front')">
+                            <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+                        </button>
+                        <button class="toggle-btn" id="cardToggleBack" onclick="event.stopPropagation(); toggleLongsleeve('back')">
+                            <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg>
+                        </button>
+                    </div>
+                    <img class="product-front" id="lsCardFront" src="img/longa-myself.png" alt="MYSELF Лонгслив спереди" loading="lazy">
+                    <img class="product-back" id="lsCardBack" src="img/longb-myself.png" alt="MYSELF Лонгслив сзади" loading="lazy">
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Лонгслив</div>
+                    <div class="product-name">Oversize Longsleeve</div>
+                    <div class="product-price">₽3 490</div>
+                </div>
+                <div class="product-actions">
+                    <button class="btn-tryon" onclick="event.stopPropagation(); openModal('longsleeve');">Примерить онлайн</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Футболка -->
+        <div class="product-card reveal" onclick="openModal('tshirt')">
+            <div class="product-card-inner">
+                <div class="product-image-wrapper">
+                    <div class="product-tag">Limited</div>
+                    <img src="img/Tshirt-myself.png" alt="MYSELF Футболка" loading="lazy">
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Футболка</div>
+                    <div class="product-name">Graphic Tee</div>
+                    <div class="product-price">₽2 490</div>
+                </div>
+                <div class="product-actions">
+                    <button class="btn-tryon" onclick="event.stopPropagation(); openModal('tshirt');">Примерить онлайн</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Преимущества -->
+<section class="features" id="about">
+    <div class="section-header reveal">
+        <span class="section-label">Философия MYSELF</span>
+        <h2 class="section-title">Наши ценности</h2>
+    </div>
+    <div class="features-grid">
+        <div class="feature-item reveal">
+            <svg class="feature-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <h3 class="feature-title">Премиум качество</h3>
+            <p class="feature-desc">Используем только лучшие материалы и ткани для создания одежды, которая служит долго.</p>
+        </div>
+        <div class="feature-item reveal">
+            <svg class="feature-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            <h3 class="feature-title">Бесплатная доставка</h3>
+            <p class="feature-desc">Доставляем по всей России бесплатно при заказе от ₽3 000. Быстро и надёжно.</p>
+        </div>
+        <div class="feature-item reveal">
+            <svg class="feature-icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            <h3 class="feature-title">Сделано с любовью</h3>
+            <p class="feature-desc">Каждая вещь — это результат творчества и внимания к деталям. Мы вкладываем душу в дизайн.</p>
+        </div>
+        <div class="feature-item reveal">
+            <svg class="feature-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>
+            <h3 class="feature-title">Лимитированные дропы</h3>
+            <p class="feature-desc">Эксклюзивные коллекции в ограниченном количестве. Успей приобрести, пока есть в наличии.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Рассылка -->
+<div class="newsletter">
+    <div class="reveal">
+        <h2 class="newsletter-title">Будь <span style="color:var(--brown)">MYSELF</span></h2>
+        <p class="newsletter-desc">Подпишись на рассылку и получи скидку 10% на первый заказ</p>
+        <form class="newsletter-form" onsubmit="handleSubscribe(event)">
+            <input type="email" placeholder="Введи свой email" required>
+            <button type="submit">Подписаться</button>
+        </form>
+    </div>
+</div>
+
+<!-- Футер -->
+<footer>
+    <div class="footer-top">
+        <div class="footer-brand">
+            <div class="footer-logo-wrapper">
+                <img src="img/logomyself.png" alt="MYSELF">
+            </div>
+            <p>MYSELF — одежда для тех, кто не боится быть собой. Каждая вещь создана, чтобы подчеркнуть твою индивидуальность.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Магазин</h4>
+            <ul>
+                <li><a href="#products">Брюки</a></li>
+                <li><a href="#products">Лонгсливы</a></li>
+                <li><a href="#products">Футболки</a></li>
+                <li><a href="#products">Аксессуары</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Информация</h4>
+            <ul>
+                <li><a href="#about">О бренде</a></li>
+                <li><a href="#">Доставка</a></li>
+                <li><a href="#">Возврат</a></li>
+                <li><a href="#">Контакты</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Поддержка</h4>
+            <ul>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Размерная сетка</a></li>
+                <li><a href="#">Политика конфиденциальности</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025 MYSELF. Wear Your Identity. Все права защищены.</p>
+        <div class="footer-socials">
+            <a href="#">Instagram</a>
+            <a href="#">Telegram</a>
+            <a href="#">VK</a>
+        </div>
+    </div>
+</footer>
+
+<!-- Корзина (Sidebar) -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h3>Корзина</h3>
+        <button class="cart-close" onclick="toggleCart()">×</button>
+    </div>
+    <div class="cart-body" id="cartBody">
+        <div class="cart-empty">
+            <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+            <p>Корзина пуста</p>
+        </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+        <div class="cart-total">
+            <span>Итого</span>
+            <span id="cartTotal">₽0</span>
+        </div>
+        <button class="cart-checkout" onclick="checkout()">Оформить заказ</button>
+    </div>
+</div>
+
+<!-- Модальное окно товара -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal" id="productModal">
+        <button class="modal-close" onclick="closeModalDirect()">×</button>
+        <div class="modal-images">
+            <img class="modal-image-front" id="modalImgFront" src="" alt="">
+            <img class="modal-image-back" id="modalImgBack" src="" alt="">
+        </div>
+        <div class="modal-details">
+            <div class="modal-category" id="modalCategory"></div>
+            <h2 class="modal-name" id="modalName"></h2>
+            <div class="modal-price" id="modalPrice"></div>
+            <p class="modal-desc" id="modalDesc"></p>
+
+            <!-- Переключатель вида для лонгслива -->
+            <div class="modal-toggle" id="modalToggleWrap" style="display:none;">
+                <label>Вид спереди</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="modalTryon" onchange="toggleModalView(this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+                <label>Вид сзади</label>
+            </div>
+
+            <div class="modal-sizes">
+                <label>Размер</label>
+                <div class="size-options" id="sizeOptions"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-add-cart" id="modalAddCart">Добавить в корзину</button>
+                <button class="modal-wishlist" onclick="showNotification('Добавлено в избранное')">
+                    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </button>
+            </div>
+            <button class="btn-tryon" id="modalTryOnBtn" style="width:100%;text-align:center;">Примерить онлайн</button>
+        </div>
+    </div>
+</div>
+
+<!-- Уведомления -->
+<div class="notification" id="notification"></div>
+<div id="clozly-preview-wrapper" style="display: none;">
+        <button id="clozly-mobile-close" onclick="closeClozlyWidget()">&times;</button>
+        <div id="preview-container">
+            <iframe src="about:blank" id="tryon-preview-iframe"></iframe>
+        </div>
+    </div>
+<!-- Подключение скрипта -->
+<script src="js/script-myself.js"></script>
+</body>
+</html>

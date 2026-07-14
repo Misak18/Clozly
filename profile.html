@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clozly - Профиль пользователя</title>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
+            crossorigin="anonymous"></script>
+            
+    <link rel="stylesheet" href="css/menu.css"> 
+     <link rel="stylesheet" href="css/style_bgg.css"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <style>
+        /* Адаптивный и темный дизайн как на других страницах */
+        :root {
+            --primary-color: #007bff;
+            --card-background-color: #2a2a2a; /* Фон хедера/карточек/мобильного меню */
+            --text-color: #f1f1f1;
+            --text-color-secondary: #c0c0c0;
+            --border-color: #444;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --font-family: 'Open Sans', sans-serif;
+            --font-family-header: 'Dela Gothic One', sans-serif;
+            --gradient-color-1: rgb(40, 100, 200);   /* Светло-синий/Голубой */
+            --gradient-color-2: rgb(0, 70, 150);     /* Средне-синий */
+            --gradient-color-3: rgb(0, 40, 100);
+            --font-header: 'Dela Gothic One', sans-serif;
+    --font-main: 'Inter', sans-serif;
+    --accent: #49b7f7;
+    --card-bg: rgba(10, 30, 90, 0.3); /* Цвет из аналитики */
+    --sidebar-width: 280px; 
+    --accent: #49b7f7;
+        }
+
+        body {
+            /* Используем стили из 1index.html */
+            font-family: var(--font-family);
+    padding: 0 !important;
+    background: linear-gradient(180deg, 
+        #020408 0%,    
+        #050c1f 30%,   
+        #0e2a5e 70%,   
+        #2159b3 100%   
+    ) !important;
+    background-attachment: fixed !important; /* Чтобы фон не скроллился, создавая глубину */
+    background-repeat: no-repeat;
+    color: #ffffff !important;
+    min-height: 100vh;
+    display: flex !important;
+        }
+
+        /* Очень важно добавить это, чтобы фон не обрывался, если контента мало */
+html {
+    background-color: #2159b3; /* Цвет совпадает с концом градиента */
+}
+        #background-canvas {
+            /* 1. Покрытие всего окна */
+            position: fixed; /* Фиксируем относительно окна браузера */
+            top: 0;
+            left: 0;
+            width: 100vw; /* 100% ширины viewport (окна) */
+            height: 100vh; /* 100% высоты viewport (окна) */
+    
+            /* 2. Позиционирование под всем содержимым */
+            z-index: -1; /* Устанавливаем самый низкий z-index */
+    
+            /* 3. Предотвращение взаимодействия */
+            pointer-events: none; /* Гарантируем, что клики проходят сквозь него */
+    
+            /* 4. На всякий случай */
+            display: block; 
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 100px auto 20px auto; /* Отступ от фиксированного хедера */
+            padding: 30px;
+            background: linear-gradient(90deg, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3));
+            border-radius: 10px;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+            z-index: 10000;
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        #avatar-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            transition: border-color 0.3s;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+
+        .avatar-container:hover .upload-overlay {
+            opacity: 1;
+        }
+        
+        .avatar-container:hover #avatar-image {
+            border-color: #f1f1f1;
+        }
+
+        .upload-overlay span {
+            color: var(--text-light, #FFFFFF);
+            font-size: 1rem;
+            text-align: center;
+            font-family: var(--font-family);
+        }
+        
+        /* Скрываем стандартное поле для файла */
+        #avatar-input {
+            display: none;
+        }
+        
+        .profile-info h3 {
+            color: var(--primary-color);
+            font-family: var(--font-family-header);
+            margin-top: 30px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--primary-color);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-item span:first-child {
+            color: var(--text-color-secondary);
+            font-weight: 600;
+        }
+                /* Главная кнопка Войти - СИНЯЯ */
+        .info-item button[type="submit"] {
+            background-color: var(--primary-color); 
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+            color: white; 
+        }
+
+        /* Группа для ввода нового логина (Flexbox для горизонтального расположения) */
+    .edit-group {
+        font-family: var(--font-family-header);
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Отступ между инпутом и кнопками */
+    }
+
+    /* Стиль для кнопки "Изменить" рядом с логином */
+    .small-button {
+        padding: 4px 8px; 
+        font-size: 0.85em; 
+        /* Убедимся, что action-button имеет нужные цвета */
+    }
+    
+    /* Отступ для кнопки "Изменить" (чтобы не использовать inline style) */
+    .edit-button-spacing {
+        margin-left: 10px;
+    }
+    
+    /* Ширина поля ввода логина */
+    .login-input-width {
+        width: 200px;
+        box-sizing: border-box; /* Учитываем padding и border в ширине */
+    }
+    
+    /* Убедимся, что элементы внутри info-item выравниваются, если это необходимо */
+    .info-item {
+        display: flex; /* Используем flex, чтобы элементы (Логин + значение + кнопка) были в ряд */
+        align-items: center;
+    }
+
+    /* Контейнер для H1 и кнопки "Изменить" */
+.login-header-group {
+    /* Наследует display: flex и align-items: center от .info-item */
+    margin-bottom: 20px; /* Увеличиваем отступ, чтобы выделить заголовок */
+    padding-bottom: 10px; /* Небольшой внутренний отступ */
+    border-bottom: 1px solid var(--text-color-secondary); /* Ненавязчивый разделитель */
+}
+
+/* Стилизация самого H1 */
+#profile-login {
+    font-family: 'Dela Gothic One', sans-serif; /* Используем шрифт для заголовков */
+    font-size: 2.5em; /* Делаем его большим и заметным */
+    color: var(--text-color); /* Основной цвет текста */
+    margin: 0; /* Убираем стандартные верхние и нижние отступы H1, чтобы не ломать Flexbox */
+    padding: 0;
+    line-height: 1.2;
+    /* Благодаря Flexbox (от .info-item), кнопка "Изменить" встанет рядом */
+    margin-right: 20px; /* Отступ от кнопки "Изменить" */
+    flex-grow: 1; /* Позволяет заголовку занять доступное пространство */
+}
+
+/* 2. СТИЛИЗАЦИЯ САЙДБАРА ПОД ОБЩИЙ ВИД */
+header.main-header {
+    all: unset;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    justify-content: flex-start !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 40px 0 !important;
+    z-index: 10000 !important;
+    box-sizing: border-box !important;
+}
+
+header.main-header h1 {
+    font-family: var(--font-header) !important;
+    font-size: 2rem !important;
+    color: #fff !important;
+    text-align: center !important;
+    margin-bottom: 50px !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+header.main-header .header-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Выравнивание всего содержимого по верхней границе */
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 15px !important;
+    margin: 0 !important;
+}
+
+.site-nav {
+    align-items: stretch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Прижимает всё к началу (вверх) */
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin-top: 0 !important; /* Убираем лишние отступы сверху */
+}
+
+/* КНОПКИ (Ссылки) */
+.site-nav a, .site-nav button {
+    all: unset;
+    padding: 12px 20px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-decoration: none !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    border: 1px solid transparent !important;
+    margin-bottom: 0 !important; /* Гарантируем отсутствие отступов снизу */
+    text-align: center;
+}
+
+/* ВАЖНО: Если элемент должен быть блочным, когда он виден, 
+   но при этом JS может его скрывать (inline style display:none)
+*/
+.site-nav a:not([style*="display: none"]), 
+.site-nav button:not([style*="display: none"]) {
+    display: block; 
+}
+
+.site-nav a:hover, 
+.site-nav a.active, 
+.site-nav button:hover {
+    background: rgba(73, 183, 247, 0.1) !important;
+    color: var(--accent) !important;
+    border: 1px solid rgba(73, 183, 247, 0.2) !important;
+}
+
+/* Специально для кнопки выхода, если она видна */
+#logout-button {
+    color: #ff5f5f !important;
+    margin-top: 10px;
+}
+
+/* Бургер скрываем */
+.burger-menu {
+    display: none !important;
+}
+
+/* 5. КНОПКИ (Стиль btn-login из лендинга) */
+.btn-primary, .clozly-action-btn, #add-product-btn {
+    all: unset;
+    background: #003ee7 !important;
+    color: #fff !important;
+    padding: 12px 28px !important;
+    border-radius: 12px !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    transition: 0.3s !important;
+    text-align: center;
+}
+
+.btn-primary:hover, .clozly-action-btn:hover {
+    background: #1a56ff !important;
+    box-shadow: 0 0 20px rgba(0, 62, 231, 0.4);
+    transform: scale(1.02);
+}
+
+/* Стилизация основного контейнера профиля как карточки в аналитике */
+.profile-container {
+    margin: 0px auto;
+    max-width: 900px;
+    padding: 40px !important;
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(15px) !important;
+    border-radius: 24px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.profile-container:hover {
+    border-color: var(--accent) !important;
+}
+
+/* Заголовки в стиле Clozly */
+.profile-info h3 {
+    font-family: var(--font-header) !important;
+    font-size: 1.8rem !important;
+    color: #ffffff !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--accent) !important;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+}
+
+/* Стилизация строк информации */
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 15px !important;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.3s ease;
+}
+
+.info-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.info-item span:first-child {
+    color: var(--accent) !important;
+    font-family: var(--font-main);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+}
+
+.info-item span:last-child {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Аватар */
+#avatar-image {
+    border: 3px solid var(--accent) !important;
+    box-shadow: 0 0 20px rgba(73, 183, 247, 0.3);
+}
+
+/* Кнопки внутри профиля */
+.action-button, #bind-telegram-button {
+    all: unset;
+    background: #003ee7 !important;
+    color: #fff !important;
+    padding: 8px 16px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase;
+    cursor: pointer !important;
+    transition: 0.3s !important;
+}
+
+.action-button:hover {
+    background: #1a56ff !important;
+    box-shadow: 0 0 15px rgba(0, 62, 231, 0.4);
+    transform: scale(1.05);
+}
+
+
+/* ==================================================
+   АДАПТИВ ПОД МОБИЛКУ (Добавлять в самый конец)
+   ================================================== */
+
+@media (max-width: 768px) {
+
+    .profile-container {
+        margin: 100px auto 40px auto;
+    }
+
+
+    /* 1. Прячем боковую панель полностью, чтобы не мешала */
+    .analytics-nav-tabs {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* Кнопки по 2 в ряд */
+        gap: 8px !important;
+        margin-bottom: 25px !important;
+        padding: 0 5px !important;
+    }
+
+    /* 3. Активная кнопка (выделяем цветом) */
+    .analytics-nav-tabs button.active {
+        background: var(--accent) !important; /* Твой синий цвет из :root */
+        color: #000 !important;
+        font-weight: 700 !important;
+        border: none !important;
+        box-shadow: 0 0 15px rgba(73, 183, 247, 0.4);
+    }
+
+    /* 4. Кнопка "Добавить Товар" — на всю ширину и яркая */
+    #add-product-btn {
+        grid-column: span 2 !important; /* Растягиваем на 2 колонки */
+        background: linear-gradient(90deg, #49b7f7, #007bff) !important;
+        color: white !important;
+        font-weight: bold !important;
+        margin-top: 5px !important;
+        border: none !important;
+        font-size: 14px !important;
+    }
+
+    /* 5. Убираем лишние бордеры, если они были в основном CSS */
+    .analytics-nav-tabs::after {
+        display: none !important;
+    }
+
+    /* Либо превращаем её в верхнюю полоску */
+    header.main-header {
+        width: 100% !important;
+        height: 60px !important;
+        position: fixed !important;
+        flex-direction: row !important; /* В ряд, если там есть лого */
+        left: 0 !important;
+        top: 0 !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        padding: 0 15px !important;
+        justify-content: center !important; /* Центрируем логотип */
+        z-index: 9999 !important;
+    }
+
+    /* Скрываем навигацию внутри хедера на мобилке (если она там мешает) */
+    header.main-header nav {
+        display: none !important;
+    }
+
+    /* 2. Лечим контейнер */
+    .analytics-container {
+        margin-left: 0 !important; /* Обнуляем отступ */
+        width: 100% !important;    /* Заставляем занять 100% вместо calc */
+        padding: 20px 15px !important; /* Уменьшаем гигантские паддинги 60px 40px */
+        flex: none !important;     /* Сбрасываем флекс */
+    }
+
+    /* 3. Расправляем блоки внутри */
+    .stat-cards {
+        grid-template-columns: 1fr !important; /* Карточки в одну колонку */
+        width: 100% !important;
+    }
+
+    .main-card, .stat-card {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 4. Таблицы — заставляем их скроллиться внутри */
+    .table-container, .scrollable-table-container {
+        width: 100% !important;
+        overflow-x: auto !important; /* Включаем горизонтальный скролл */
+        display: block !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 5. Убираем фиксированные размеры у картинок, если они есть */
+    .product-card-img {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* Адаптация */
+@media (max-width: 1024px) {
+    header.main-header {
+        width: 100% !important;
+        height: auto !important;
+        position: relative !important;
+        flex-direction: row !important;
+        padding: 20px !important;
+    }
+    .analytics-container { margin-left: 0 !important; padding: 20px !important; }
+}
+
+@media (max-width: 1024px) {
+    /* Фиксированный хедер */
+    header.main-header {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: 70px !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0 20px !important;
+        background: #020408 !important;
+        z-index: 10001 !important;
+        border-bottom: 1px solid rgba(73, 183, 247, 0.3) !important;
+    }
+
+    /* Выпадающее мобильное меню */
+    .site-nav {
+        display: none !important; /* Скрыто по умолчанию */
+        position: absolute !important;
+        top: 70px !important; /* Сразу под хедером */
+        left: 0 !important;
+        width: 100% !important;
+        background: rgba(2, 4, 8, 0.98) !important;
+        backdrop-filter: blur(15px) !important;
+        flex-direction: column !important;
+        padding: 20px !important;
+        gap: 10px !important;
+        border-bottom: 2px solid var(--accent) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.8) !important;
+    }
+
+    /* Класс, который будет добавлять JS при клике на бургер */
+    .site-nav.mobile-open {
+        display: flex !important;
+    }
+
+    .site-nav a, .site-nav button {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 15px !important;
+        background: rgba(255,255,255,0.05) !important;
+    }
+
+    /* Бургер-иконка */
+    .burger-menu {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        width: 30px !important;
+        height: 30px !important;
+        cursor: pointer !important;
+    }
+
+    .burger-menu span, .burger-menu .bar1, .burger-menu .bar2, .burger-menu .bar3 {
+        display: block !important;
+        width: 100% !important;
+        height: 3px !important;
+        background: #fff !important;
+        border-radius: 2px !important;
+        transition: 0.3s !important;
+    }
+
+    /* Контейнер контента */
+    .analytics-container {
+        margin-left: 0 !important;
+        padding: 100px 15px 30px 15px !important; /* Увеличили отступ сверху */
+        width: 100% !important;
+    }
+
+    h2, .main-card h2 {
+        font-size: 1.7rem !important;
+        margin-top: 10px !important;
+    }
+}
+
+    </style>
+
+</head>
+<body>
+<div class="container">
+        <header class="main-header">
+            <div class="container header-container">
+                <h1>Clozly</h1>
+
+                <div class="burger-menu" id="burger-menu">
+                    <div class="bar1"></div>
+                    <div class="bar2"></div>
+                    <div class="bar3"></div>
+                </div>
+
+                <nav id="main-nav" class="site-nav">
+                    <span id="user-info"></span>
+                    
+                    <a href="analytics.html" id="analytics-link">Аналитика</a>
+                    <a href="tarifs.html" id="tarifs-panel-link">Тарифы</a>
+                    <a href="faq.html" id="tarifs-panel-link">Поддержка</a>
+                    
+                    <a href="login.html" id="login-link" class="btn-primary" style="display:none;">Вход</a>
+                    <a href="register.html" id="register-link" class="btn-primary" style="display:none;">Регистрация</a>
+                    <button id="logout-button" style="display:none;">Выход</button>
+                    <a href="admin.html" id="admin-panel-link" style="display:none;">Админ Панель</a>
+                </nav>
+            </div>
+        </header>
+
+</div>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="avatar-container">
+                <img id="avatar-image" src="/img/user-icon.png" alt="Аватар пользователя">
+                <label for="avatar-input" class="upload-overlay">
+                    <span>Загрузить<br>Аватар</span>
+                </label>
+                <input type="file" id="avatar-input" accept="image/*">
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <h3>Основная информация</h3>
+            <div class="info-item">
+                <span>Email:</span>
+                <span id="profile-email">N/A</span>
+            </div>
+            <div class="info-item">
+                <span>Номер телефона:</span>
+                <span id="profile-phone-number">N/A</span>
+            </div>
+            <div class="info-item">
+                <span>Тариф:</span>
+                <span id="profile-Tariffs">N/A</span>
+            </div>
+            <div class="info-item">
+                <span>ID Пользователя:</span>
+                <span id="profile-id">N/A</span>
+            </div>
+            <div class="info-item">
+                <span>Telegram:</span>
+                <span id="profile-telegram-username"></span> 
+                <button id="bind-telegram-button" class="action-button" type="submit" style="margin-left: 10px;">Привязать Telegram</button>
+            </div>
+
+            <div id="bind-telegram-message" class="message-box" style="display:none; margin-top: 10px;"></div>
+            <div class="info-item">
+                <span>Баланс:</span>
+                <span id="profile-balance">0.00 $</span>
+            </div>
+            <div class="info-item">
+                <span>Бесплатных генераций использованно:</span>
+                <span id="profile-generations">10</span>
+            </div>
+            <div class="info-item">
+                <span>Тип организации:</span>
+                <span id="profile-organization-type">N/A</span>
+            </div>
+            
+            <div id="message" class="message-box" style="display:none; margin-top: 20px;"></div>
+        </div>
+    </div>
+    <script src="js/auth_client.js" type="module"></script>
+    <script src="js/menu.js"></script> 
+    <script src="js/utils.js" type="module"></script> 
+    <script src="js/profile_client.js" type="module"></script> 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const burger = document.getElementById('burger-menu');
+    const nav = document.getElementById('main-nav');
+
+    if (burger && nav) {
+        burger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            nav.classList.toggle('mobile-open');
+        });
+    }
+});
+    </script>
+
+</body>
+</html>

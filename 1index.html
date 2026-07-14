@@ -1,0 +1,2427 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clozly — AI Примерочная</title>
+    <link rel="stylesheet" href="css/all.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --font-header: 'Dela Gothic One', sans-serif;
+            --font-main: 'Inter', sans-serif;
+            --accent: #49b7f7;
+            --bg-dark: #0a0a0c;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --gradient: linear-gradient(135deg, #2864c8, #004696, #002864);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    padding: 0;
+    /* Убираем fixed, чтобы градиент растянулся на всю длину страницы */
+    background: linear-gradient(180deg, 
+        #020408 0%,    /* Совсем темный верх (начало страницы) */
+        #050c1f 30%,   /* Плавный переход в глубокий синий */
+        #0e2a5e 70%,   /* Насыщенный синий */
+        #2159b3 100%   /* Самый светлый синий (конец страницы/футер) */
+    );
+    background-repeat: no-repeat;
+    background-attachment: scroll; /* Градиент "двигается" вместе с контентом */
+    
+    color: #ffffff;
+    font-family: 'Open Sans', sans-serif;
+    min-height: 100vh; 
+}
+
+/* Очень важно добавить это, чтобы фон не обрывался, если контента мало */
+html {
+    background-color: #2159b3; /* Цвет совпадает с концом градиента */
+}
+        canvas#gradientCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- HEADER --- */
+        header.site-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95%;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: var(--font-header);
+            font-size: 1.4rem;
+            text-decoration: none;
+            color: #fff;
+            line-height: 1;      /* Убираем лишние невидимые отступы шрифта сверху и снизу */
+    height: 38px;
+        }
+        .site-nav {
+            display: flex;
+            align-items: center; /* Выравнивает кнопку «Войти» строго по центру линии логотипа */
+        }
+
+        .site-nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .btn-login {
+            background: #003ee7;
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+
+        /* --- HERO --- */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 85%;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .hero-text h1 {
+            font-family: var(--font-header);
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: #ccc;
+            max-width: 500px;
+        }
+
+        /* --- CAROUSEL (Возможности) --- */
+        .features-section {
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .features-section h2 {
+            font-family: var(--font-header);
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: 20px;
+        }
+
+        .feature-card {
+            min-width: calc(33.333% - 14px);
+            background: var(--card-bg);
+            padding: 40px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card h3 { font-family: var(--font-header); font-size: 1.5rem; }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--gradient);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .btn-prev { left: 10px; }
+        .btn-next { right: 10px; }
+
+        /* ========================================================
+           --- СТИЛИЗАЦИЯ FAQ И БЛОКА "ГОТОВЫ НАЧАТЬ?" ТОЧЬ-В-ТОЧЬ ---
+           ======================================================== */
+        .faq-section {
+            max-width: 1200px;
+            margin: 100px auto 40px auto;
+            padding: 0 20px;
+        }
+
+        .faq-section h2 {
+            font-family: var(--font-main);
+            font-size: 42px; 
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .faq-item {
+            margin-bottom: 14px; 
+            background: rgba(10, 35, 105, 0.2); /* Тёмно-синие аккуратные плашки со скриншота */
+            border-radius: 16px;
+            border: 1px solid #163fa0;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-question {
+            padding: 22px 28px; 
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            font-size: 16px; 
+            color: #ffffff;
+            user-select: none;
+        }
+
+        .faq-question span {
+            padding-right: 20px;
+        }
+
+        /* Иконки Плюс/Х Крестик со скриншота */
+        .faq-toggle-icon {
+            font-size: 18px;
+            color: #ffffff;
+            transition: transform 0.3s ease;
+            font-weight: 300;
+            display: inline-block;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease;
+            color: rgba(255, 255, 255, 0.75); 
+            line-height: 1.6;
+            font-size: 14px; 
+            padding: 0 28px;
+        }
+
+        /* Активное состояние */
+        .faq-item.active {
+            background: rgba(13, 46, 136, 0.2);;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px; /* С запасом для любого объема контента */
+            padding-bottom: 24px; 
+        }
+
+        /* --- БЛОК С КНОПКАМИ "ГОТОВЫ НАЧАТЬ?" --- */
+        .cta-box-container {
+            max-width: 1200px;
+            margin: 60px auto 120px auto;
+            padding: 0 20px;
+        }
+
+        .cta-purple-card {
+            background: rgba(10, 35, 105, 0.3); /* Сине-фиолетовый глубокий фон карточки */
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            border: 1px solid #163fa0;
+        }
+
+        .cta-purple-card h3 {
+            font-family: var(--font-main);
+            font-size: 40px;
+            font-weight: 800;
+            margin: 0 0 20px 0;
+            color: #ffffff;
+        }
+
+        .cta-purple-card p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 480px;
+            margin: 0 auto 35px auto;
+            line-height: 1.5;
+        }
+
+        .cta-buttons-flex {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta-blue {
+            background: #0052ff;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-cta-blue:hover {
+            background: #0045d9;
+            transform: translateY(-2px);
+        }
+
+        /* ==================================
+        МОБИЛЬНАЯ АДАПТАЦИЯ
+        ================================== */
+        @media (max-width: 992px) {
+            .widget-grid { grid-template-columns: 1fr; gap: 20px; }
+            .widget-title { font-size: 42px; }
+            .pricing-grid { grid-template-columns: 1fr; gap: 25px; }
+            .pricing-card { max-width: 450px; width: 100%; margin: 0 auto; }
+            .individual-tariff-box { flex-direction: column; gap: 30px; padding: 30px; text-align: center; }
+            .individual-left { display: flex; flex-direction: column; align-items: center; }
+            .individual-left h3 { font-size: 1.8rem; }
+            .dashboard-features-container { grid-template-columns: 1fr; gap: 30px; }
+            .dash-preview-display { order: -1; }
+            .dashboard-section h2 { font-size: 2.5rem; }
+        }
+
+        /* --- DASHBOARD STUB (Личный кабинет) --- */
+        .dashboard-stub {
+            background: #fff;
+            color: #000;
+            min-height: 400px;
+            margin: 50px 20px;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
+        }
+
+        .dashboard-stub.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .hero { flex-direction: column; text-align: center; }
+            .hero-text h1 { font-size: 2rem; }
+            .feature-card { min-width: 100%; }
+        }
+
+/* Основная секция */
+.widget-section {
+    width: 100%;
+    padding: 100px 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    /* Плавное появление всего блока */
+    animation: fadeInSection 1s ease-out;
+}
+
+.widget-container {
+    max-width: 1200px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Заголовки */
+.widget-title {
+    font-family: 'Dela Gothic One', sans-serif;
+    font-size: 64px;
+    color: #ffffff;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+}
+
+.widget-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 60px;
+}
+
+/* Сетка карточек */
+.widget-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+/* Стили карточек (Glassmorphism как в PDF) */
+.widget-card {
+    background: rgba(10, 30, 90, 0.3); /* Темно-синий прозрачный */
+    backdrop-filter: blur(10px);
+    border: 2px solid #1a4fb0; /* Яркая синяя рамка со скрина */
+    border-radius: 24px;
+    padding: 40px 30px;
+    text-align: left;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: default;
+}
+
+.widget-card:hover {
+    transform: translateY(-15px);
+    background: rgba(20, 60, 150, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: #49b7f7;
+}
+
+/* Иконки */
+.widget-icon {
+    width: 48px;
+    height: 48px;
+    color: #ffffff;
+    margin-bottom: 30px;
+}
+
+.widget-icon svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 8px rgba(73, 183, 247, 0.5));
+}
+
+/* Текст внутри карточек */
+.widget-card h3 {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 15px 0;
+}
+
+.widget-card p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+/* Анимация появления */
+@keyframes fadeInSection {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================================
+МОБИЛЬНАЯ АДАПТАЦИЯ
+================================== */
+@media (max-width: 992px) {
+    .widget-grid {
+        grid-template-columns: 1fr; /* Карточки в одну колонку */
+        gap: 20px;
+    }
+    
+    .widget-title {
+        font-size: 42px;
+    }
+    
+    .widget-card {
+        padding: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .widget-section {
+        padding: 60px 15px;
+    }
+    
+    .widget-title {
+        font-size: 32px;
+    }
+    
+    .widget-subtitle {
+        font-size: 16px;
+        margin-bottom: 40px;
+    }
+}
+
+/* Основная секция Демо-магазинов */
+.demo-section {
+    width: 100%;
+    padding: 80px 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    /* Анимация плавного появления при прокрутке */
+    animation: fadeInUp 1.2s ease-out;
+}
+
+.demo-container {
+    max-width: 1200px;
+    width: 100%;
+    text-align: center;
+}
+
+.demo-title {
+    font-family: var(--font-family-header);
+    font-size: 56px;
+    color: #ffffff;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.demo-subtitle {
+    font-family: var(--font-family);
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 60px;
+}
+
+/* Контейнер для логотипов */
+.demo-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px; /* Расстояние между кругами на ПК */
+    flex-wrap: wrap;
+}
+
+/* Элемент логотипа (Круг) */
+.logo-item {
+    width: 200px;  /* Размер круга */
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.05); /* Легкая подложка, пока фото грузится */
+}
+
+.logo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Изображение заполнит круг полностью */
+}
+
+/* Анимация при наведении */
+.logo-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(73, 183, 247, 0.2);
+}
+
+
+.logo-img-nav {
+    height: 1em;       /* Высота картинки всегда равна высоте текста */
+    width: auto;       /* Ширина масштабируется автоматически без искажений */
+    object-fit: contain;
+    border-radius: 12px;
+    font-size: 2.2rem;
+    
+}
+
+/* Общая анимация появления */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================================
+АДАПТАЦИЯ ПОД МОБИЛЬНЫЕ
+================================== */
+@media (max-width: 768px) {
+    .demo-title {
+        font-size: 36px;
+    }
+
+    .demo-subtitle {
+        font-size: 16px;
+        padding: 0 10px;
+    }
+
+    .demo-logos {
+        gap: 30px; /* Уменьшаем зазоры на мобилках */
+    }
+
+    .logo-item {
+        width: 150px; /* Уменьшаем размер кругов */
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .demo-section {
+        padding: 50px 15px;
+    }
+
+    .demo-title {
+        font-size: 28px;
+    }
+
+    .logo-item {
+        width: 130px;
+        height: 130px;
+    }
+}
+
+/* Кнопка «Войти» */
+.btn-login-nav {
+    background: #003ee7;
+    color: #fff;
+    /* Убираем padding сверху и снизу (10px), оставляем только по бокам (25px) */
+    padding: 0 25px; 
+    border-radius: 10px;
+    text-transform: uppercase;
+    
+    /* РЕШЕНИЕ: Жесткая высота и центрирование текста внутри кнопки */
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box; /* Чтобы padding не увеличивал высоту */
+}
+
+.logo-text {
+    display: inline-block;
+    
+    /* Двигаем сам текст по оси Y. 
+       Если буквы визуально сидят чуть выше центра картинки — поставь 2px или 3px.
+       Если буквы сидят чуть ниже — поставь -1px или -2px */
+    transform: translateY(-8px); 
+}
+
+/* --- СЕКЦИЯ "КАК УСТАНОВИТЬ" (ПО ИЗОБРАЖЕНИЮ) --- */
+.install-section {
+    text-align: center;
+}
+
+.install-section h2 {
+    font-family: var(--font-header);
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.install-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 60px;
+}
+
+/* Сетка для трех шагов */
+.install-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto 80px auto;
+}
+
+.install-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Синие кружки с цифрами */
+.step-number {
+    width: 140px;
+    height: 140px;
+    background: #002589; /* Яркий насыщенный синий со скрина */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-header);
+    font-size: 4rem;
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.install-step h3 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: #fff;
+}
+
+.install-step p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    max-width: 320px;
+}
+
+/* Блок "Нужна помощь с установкой?" снизу */
+.help-box {
+    max-width: 900px;
+    margin: 0 auto;
+    border: 2px solid #003ee7;
+    border-radius: 20px;
+    padding: 40px 20px;
+    background: rgba(0, 62, 231, 0.05);
+    backdrop-filter: blur(5px);
+}
+
+.help-box p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 15px 0;
+}
+
+.help-box h3 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0 0 30px 0;
+    color: #fff;
+}
+
+/* Кнопка НАПИСАТЬ МЕНЕДЖЕРУ */
+.btn-manager {
+    display: inline-block;
+    background: #003ee7;
+    color: #fff;
+    text-decoration: none;
+    padding: 15px 40px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-manager:hover {
+    background: #002db3;
+    transform: scale(1.02);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 992px) {
+    .install-grid {
+        grid-template-columns: 1fr;
+        gap: 50px;
+    }
+    .step-number {
+        width: 110px;
+        height: 110px;
+        font-size: 3rem;
+    }
+    .help-box h3 {
+        font-size: 1.4rem;
+    }
+}
+
+/* --- СЕКЦИЯ ТАРИФЫ (ПО ИЗОБРАЖЕНИЮ) --- */
+.pricing-section {
+    padding: 100px 20px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pricing-section h2 {
+    font-family: var(--font-header);
+    font-size: 3.5rem;
+    margin-bottom: 60px;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+/* Сетка тарифов */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+    align-items: stretch; /* Чтобы карточки были одинаковой высоты */
+}
+
+/* Базовая карточка тарифа */
+.pricing-card {
+    background: rgba(10, 35, 105, 0.2);
+    border: 1px solid #163fa0;
+    border-radius: 24px;
+    padding: 40px 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 400px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Выделенная по центру карточка PRO */
+.pricing-card.pro-card {
+    border: 1px solid #ffffff; /* Тонкая белая рамка как на фото */
+    background: rgba(10, 35, 105, 0.3);
+}
+
+/* Тексты внутри карточек */
+.card-header-box h3 {
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 0 0 10px 0;
+    color: #ffffff;
+}
+
+.price-value {
+    font-size: 2.2rem;
+    font-weight: 400;
+    margin-bottom: 25px;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto 30px auto;
+    text-align: left;
+    display: inline-block; /* Чтобы маркеры выравнивались по левому краю по центру */
+}
+
+.pricing-features li {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.5); /* Приглушенный текст */
+    margin-bottom: 10px;
+}
+
+/* Зеленый текст стоимости генерации */
+.pricing-features li.green-info {
+    color: #00e676; 
+    font-weight: 500;
+}
+
+/* Кнопки-капсулы */
+.btn-pricing {
+    background: #003ee7;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 35px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-pricing:hover {
+    background-color: #002db3;
+}
+
+.btn-pricing i {
+    font-size: 0.8rem;
+}
+
+/* --- СТИЛИ ДЛЯ ИНДИВИДУАЛЬНОЙ ПЛАШКИ ВНИЗУ --- */
+.individual-tariff-box {
+    background: rgba(10, 35, 105, 0.2);
+    border: 1px solid #163fa0;
+    border-radius: 24px;
+    padding: 40px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.individual-left h3 {
+    font-size: 2.4rem;
+    font-weight: 400;
+    margin: 0 0 20px 0;
+    color: #ffffff;
+}
+
+.individual-left .pricing-features {
+    margin-bottom: 0;
+}
+
+.individual-right {
+    flex-shrink: 0;
+}
+
+/* Увеличенная кнопка для отправки заявки */
+.btn-submit-request {
+    padding: 15px 45px;
+}
+
+/* --- АДАПТИВНОСТЬ ПОД МОБИЛЬНЫЕ УСТРОЙСТВА --- */
+@media (max-width: 992px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .pricing-card {
+        max-width: 450px;
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    .individual-tariff-box {
+        flex-direction: column;
+        gap: 30px;
+        padding: 30px;
+        text-align: center;
+    }
+    
+    .individual-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .individual-left h3 {
+        font-size: 1.8rem;
+    }
+}
+
+/* --- СЕКЦИЯ ВОЗМОЖНОСТИ (ИДЕАЛЬНОЕ ЦЕНТРИРОВАНИЕ) --- */
+.features-section {
+    padding: 100px 0;
+    text-align: center;
+    background: transparent;
+    width: 100%;
+    overflow: hidden; /* Скрывает все лишние боковые карточки */
+    position: relative;
+}
+
+.features-section h2 {
+    font-family: var(--font-header);
+    font-size: 3.5rem;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+/* Табы сверху */
+.features-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+    padding: 0 20px;
+}
+
+.tab-btn {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
+    font-family: var(--font-main);
+}
+
+.tab-btn.active {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+}
+
+/* Окно просмотра фиксированной высоты */
+.features-carousel-viewport {
+    width: 100%;
+    position: relative;
+    height: 560px; /* Фиксируем высоту под карточки, чтобы абсолютный трек не схлопывался */
+    margin: 0 auto;
+}
+
+/* Бесконечный трек с жесткой привязкой к центру родителя */
+.features-carousel-track {
+    display: flex;
+    gap: 40px; /* Отступ между карточками */
+    position: absolute;
+    top: 40px;
+    left: 50%; /* Ставим начало трека ровно по центру родительской секции */
+    
+    /* Изначальное смещение: сдвигаем трек влево на половину ширины одной карточки (180px),
+       чтобы её геометрический центр совпал с центром экрана */
+    transform: translateX(-180px); 
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
+
+/* Слайд-карточка */
+.features-slide-card {
+    width: 360px;
+    min-width: 360px;
+    background: rgba(10, 25, 75, 0.25);
+    border: 1px solid #163fa0;
+    border-radius: 20px;
+    padding: 50px 30px 40px 30px;
+    box-sizing: border-box;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    position: relative;
+    
+    /* Скрываем все дальние карточки */
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.85);
+    transition: transform 0.6s ease, opacity 0.6s ease, visibility 0.6s ease, background-color 0.6s ease;
+}
+
+/* Отображение ровно по одной карточке слева и справа */
+.features-slide-card.side-visible {
+    opacity: 0.3;
+    visibility: visible;
+    transform: scale(0.9);
+}
+
+/* Центральная активная карточка */
+.features-slide-card.active-focus {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1.05);
+    background: rgba(12, 35, 105, 0.6);
+    border-color: transparent;
+}
+
+/* Общие стили для первой пары уголков (Верхний-Левый и Нижний-Правый) */
+.features-slide-card.active-focus::before,
+.features-slide-card.active-focus::after {
+    content: "";
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #ffffff;
+    pointer-events: none;
+    z-index: 2; /* Чтобы уголки были поверх фона */
+}
+/* Верхний-левый угол */
+.features-slide-card.active-focus::before {
+    top: -3px; 
+    left: -3px;
+    border-right: none; 
+    border-bottom: none;
+}
+/* Нижний-правый угол */
+.features-slide-card.active-focus::after {
+    bottom: -3px; 
+    right: -3px;
+    border-left: none; 
+    border-top: none;
+}
+
+/* Создаем новые селекторы для второй пары уголков через псевдоэлементы контента карточки */
+.features-slide-card.active-focus .card-body::before,
+.features-slide-card.active-focus .card-body::after {
+    content: "";
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #ffffff;
+    pointer-events: none;
+    z-index: 2;
+}
+/* Верхний-правый угол */
+.features-slide-card.active-focus .card-body::before {
+    top: -3px; 
+    right: -3px;
+    border-left: none; 
+    border-bottom: none;
+}
+/* Нижний-левый угол */
+.features-slide-card.active-focus .card-body::after {
+    bottom: -3px; 
+    left: -3px;
+    border-right: none; 
+    border-top: none;
+} 
+
+.features-slide-card .card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* Стили текстов */
+.title-bold { font-size: 2.5rem; font-weight: 700; margin: 40px 0 10px 0; color: #ffffff; }
+.stat-value { font-size: 4rem; font-weight: 700; margin: 30px 0 10px 0; color: #ffffff; }
+.text-blue-arrow { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.text-blue-arrow i { color: #007bff; }
+.subtitle-text { font-size: 1.1rem; color: #ffffff; margin: 0 0 40px 0; }
+/* Прижимает текст описания строго к нижнему краю карточки */
+.desc-text { 
+    font-size: 0.95rem; 
+    line-height: 1.6; 
+    color: rgba(255, 255, 255, 0.4); 
+    margin-top: auto; /* Самый важный параметр для спуска вниз */
+}
+/* Кнопки навигации */
+.features-nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+.feat-nav-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: #11286b;
+    border: none;
+    color: #ffffff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.feat-nav-btn:hover { background: #1a3cb3; }
+
+/* Мобильная адаптивность */
+@media(max-width: 768px) {
+    .features-carousel-viewport {
+        height: 520px;
+    }
+    .features-carousel-track {
+        transform: translateX(-145px); /* Половина от 290px */
+    }
+    .features-slide-card {
+        width: 290px;
+        min-width: 290px;
+        padding: 40px 20px;
+        min-height: 440px;
+    }
+    .features-section h2 { font-size: 2.5rem; }
+}
+
+/* --- СЕКЦИЯ ЛИЧНЫЙ КАБИНЕТ (УВЕЛИЧЕННОЕ ПК-ИЗОБРАЖЕНИЕ) --- */
+.dashboard-section {
+    padding: 100px 20px;
+    max-width: 90%; /* Увеличили общую ширину контейнера, чтобы картинка была еще больше */
+    margin: 0 auto;
+    text-align: left;
+}
+
+.dashboard-section h2 {
+    font-family: var(--font-header);
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.dashboard-section-subtitle {
+    font-family: var(--font-main);
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 60px auto;
+    line-height: 1.5;
+}
+
+/* Новая пропорция сетки: кнопки стали меньше (1fr), область изображения значительно больше (1.8fr) */
+.dashboard-features-container {
+    display: grid;
+    grid-template-columns: 1fr 1.8fr; 
+    gap: 40px;
+}
+
+/* Левая сторона: Компактное меню элементов */
+.dash-steps-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Уменьшили расстояние между кнопками */
+}
+
+.dash-menu-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px; /* Чуть более аккуратный радиус */
+    padding: 14px 20px; /* Уменьшили внутренние отступы кнопок */
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.dash-menu-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* Шапка пункта меню (Уменьшенные размеры) */
+.dash-step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px; /* Уменьшили зазор между иконкой и текстом */
+}
+
+.dash-icon-box {
+    width: 36px;  /* Уменьшили размер блока иконки (было 46px) */
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1rem; /* Сделали саму иконку аккуратнее */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dash-step-header h3 {
+    font-family: var(--font-main);
+    font-size: 1.15rem; /* Уменьшили шрифт заголовка (было 1.35rem) */
+    font-weight: 600;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.3s ease;
+}
+
+/* Описание шага */
+.dash-step-description {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    padding-left: 50px; /* Выровняли под новую маленькую иконку */
+}
+
+.dash-step-description p {
+    font-size: 0.9rem; /* Чуть уменьшили текст описания */
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 6px 0 0 0;
+}
+
+/* Стили для активного шага */
+.dash-menu-item.active {
+    background: rgba(10, 35, 105, 0.15);
+    border-color: #163fa0;
+}
+
+.dash-menu-item.active .dash-icon-box {
+    background: #003ee7;
+    color: #ffffff;
+}
+
+.dash-menu-item.active .dash-step-header h3 {
+    color: #ffffff;
+}
+
+.dash-menu-item.active .dash-step-description {
+    max-height: 80px;
+    opacity: 1;
+}
+
+/* ПРАВАЯ СТОРОНА: Огромная прозрачная ПК область */
+.dash-preview-display {
+    background: transparent;
+    width: 100%;
+    aspect-ratio: 1619 / 971; /* Строго сохраняем пропорции твоего ПК скрина */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Обертки для изображений */
+.dash-img-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.99); /* Меньше скейла при переключении, чтобы фокус был на размере */
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.dash-img-wrapper.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.dash-img-wrapper img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Адаптивность под планшеты и мобилки */
+@media (max-width: 992px) {
+    .dashboard-features-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .dash-preview-display {
+        order: -1; /* На смартфонах большая картинка сверху, меню под ней */
+    }
+    .dashboard-section h2 {
+        font-size: 2.5rem;
+    }
+}
+
+/* Основной контейнер секции (без жесткого ограничения ширины) */
+.clozly-footer-section {
+    box-sizing: border-box;
+    width: 100%;
+    background-color: #0b3cca; /* Яркий синий цвет фона из макета */
+    border-radius: 24px;
+    padding: 70px 5% 40px 5%; /* Увеличили верхний и нижний отступы */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 70px;
+}
+
+.clozly-footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap; /* Перенос элементов на мобильных экранах */
+    gap: 40px;
+}
+
+/* Левый блок контента */
+.clozly-footer-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Контейнер для увеличенного PNG логотипа */
+.clozly-footer-logo-wrapper {
+    display: flex;
+    align-items: center;
+    height: 100px; /* Увеличено с 52px до 72px для большей массивности */
+}
+
+.clozly-footer-logo-img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+/* Слоган под логотипом */
+.clozly-footer-tagline {
+    font-size: 20px; /* Слегка увеличили шрифт слогана */
+    color: #ffffff;
+    opacity: 0.9;
+    margin: 24px 0 40px 0;
+    font-weight: 400;
+}
+
+/* Белая кнопка */
+.clozly-footer-btn {
+    display: inline-block;
+    background-color: #ffffff;
+    color: #0b3cca;
+    padding: 16px 36px; /* Чуть увеличили кликабельную зону кнопки */
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.clozly-footer-btn:hover {
+    background-color: #f0f4ff;
+}
+
+.clozly-footer-btn:active {
+    transform: scale(0.98);
+}
+
+/* Правый блок (Увеличенный QR-код) */
+.clozly-footer-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.clozly-qrcode-wrapper {
+    background-color: #ffffff;
+    padding: 20px; /* Увеличили внутренний отступ белой плашки */
+    border-radius: 28px; /* Сделали углы более круглыми и мягкими */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 310px; /* Увеличено со 160px до 210px */
+    height: 310px; /* Увеличено со 160px до 210px */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.clozly-qrcode-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Нижние ссылки подвала */
+.clozly-footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 30px;
+}
+
+.clozly-footer-links a {
+    color: #ffffff;
+    opacity: 0.7;
+    font-size: 14px;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.clozly-footer-links a:hover {
+    opacity: 1;
+}
+
+/* Адаптивность под мобильные устройства */
+@media (max-width: 768px) {
+    .clozly-footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .clozly-footer-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .clozly-footer-links {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+}
+
+/* Контейнер-колонка для картинки на ПК */
+.hero-img {
+    width: 100%;
+    min-width: 0; 
+    display: flex;         
+    justify-content: center; /* Центрируем слайдер по горизонтали */
+    align-items: center;     /* Центрируем по вертикали */
+}
+
+/* Контейнер слайдера */
+.before-after-slider {
+    position: relative;
+    width: 90%; /* Берет 90% от ширины колонки, оставляя по 5% по бокам */
+    max-width: 1344px; /* Ограничение по родному разрешению картинок */
+    aspect-ratio: 1344 / 768; /* Пропорции десктопа */
+    overflow: hidden; 
+    border-radius: 24px; 
+    user-select: none;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transform: translateZ(0); /* Фикс закруглений для Safari */
+}
+
+/* Общие стили для оберток картинок */
+.slider-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+/* Картинки внутри слайдера */
+.slider-img img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    pointer-events: none;
+}
+
+/* Картинка "После" (справа) изначально открыта наполовину */
+.img-after {
+    clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
+    z-index: 2;
+}
+
+.img-before {
+    z-index: 1;
+}
+
+/* Белая линия разделения */
+.slider-handle {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 4px;
+    height: 100%;
+    background-color: #ffffff;
+    transform: translateX(-50%);
+    cursor: ew-resize;
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Синяя кнопка-круг по центру линии */
+.slider-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background-color: #003ee7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 62, 231, 0.4), 0 0 0 4px rgba(255, 255, 255, 0.2);
+}
+
+/* Иконка стрелочек внутри круга */
+.slider-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Адаптив под мобильные устройства (ЗДЕСЬ ВСЕ ОСТАЛОСЬ БЕЗ ИЗМЕНЕНИЙ, КАК ВЫ ПРОСИЛИ) */
+@media (max-width: 768px) {
+    .hero {
+        display: flex;
+        flex-direction: column; 
+    }
+
+    .hero-img {
+        order: 1; 
+        margin-bottom: 30px; 
+        justify-content: center; 
+    }
+
+    .hero-text {
+        order: 2; 
+        text-align: center; 
+    }
+    
+    .before-after-slider {
+        width: 100%; /* На мобилках возвращаем во всю ширину */
+        aspect-ratio: 4 / 3; 
+        border-radius: 16px; 
+    }
+    
+    .slider-img, .slider-img img {
+        border-radius: 16px;
+    }
+}
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    
+    <a href="#" class="logo">
+        <img src="img/logo_Clozly.jpg" alt="Clozly Logo" class="logo-img-nav">
+        <span class="logo-text">CLOZLY</span>
+    </a>
+    <nav class="site-nav">
+        <a href="/login.html" class="btn-login-nav" >Войти</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-text">
+        <h1>ВИРТУАЛЬНАЯ<br>AI-ПРИМЕРОЧНАЯ</h1>
+        <p>Ваши покупатели примеряют одежду онлайн прямо на вашем сайте в пару кликов.</p>
+        <br>
+        <a href="/register.html" class="btn-login" style="display:inline-block; text-decoration:none; margin-bottom: 40px;">Попробовать бесплатно</a>
+    </div>
+<div class="hero-img">
+    <div class="before-after-slider">
+        <div class="slider-img img-before">
+            <img src="img/girl_2.jpg" alt="До">
+        </div>
+        
+        <div class="slider-img img-after">
+            <img src="img/girl_1.jpg" alt="После">
+        </div>
+
+        <div class="slider-handle">
+            <div class="slider-button">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 12H18M6 12L10 8M6 12L10 16M18 12L14 8M18 12L14 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<section class="widget-section">
+    <div class="widget-container">
+        <h2 class="widget-title">Виджет</h2>
+        <p class="widget-subtitle">Примерка образов за пару кликов с легкой интеграцией</p>
+        
+        <div class="widget-grid">
+            <div class="widget-card">
+                <div class="widget-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h3>Быстрая интеграция</h3>
+                <p>Подключите виджет к сайту за 5 минут. Один скрипт — и виджет работает на любой платформе</p>
+            </div>
+
+            <div class="widget-card">
+                <div class="widget-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.912 5.886h6.191l-5.008 3.638 1.912 5.886-5.007-3.638-5.007 3.638 1.912-5.886-5.008-3.638h6.191z"/></svg>
+                </div>
+                <h3>AI технологии</h3>
+                <p>Реалистичная примерка с сохранением пропорций тела и черт лица клиента. Генерация до 30 сек</p>
+            </div>
+
+            <div class="widget-card">
+                <div class="widget-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+                <h3>Аналитика</h3>
+                <p>Статистика продаж в реальном времени. Отслеживайте популярность товаров в личном кабинете</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="demo-section">
+    <div class="demo-container">
+        <h2 class="demo-title">Демо-магазины</h2>
+        <p class="demo-subtitle">Посмотрите как наш виджет выглядит на сайтах других брендов</p>
+        
+        <div class="demo-logos">
+            <div class="logo-item">
+                <a href="/zevra.html" style="display: block; width: 100%; height: 100%;">
+                    <img src="img/Логотипы для лендинга_pages-to-jpg-0001.jpg" alt="ZEVRA">
+                </a>
+            </div>
+            <div class="logo-item">
+                <a href="/a10.html" style="display: block; width: 100%; height: 100%;">
+                    <img src="img/Логотипы для лендинга_pages-to-jpg-0002.jpg" alt="AM 10">
+                </a>
+            </div>
+            <div class="logo-item">
+                <a href="/myself.html" style="display: block; width: 100%; height: 100%;">
+                    <img src="img/Логотипы для лендинга_pages-to-jpg-0003.jpg" alt="Brand 3">
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section" id="features">
+    <h2>Возможности</h2>
+    
+    <div class="features-tabs">
+        <span class="tab-btn" data-slide="0">Возвраты</span>
+        <span class="tab-btn" data-slide="1">LTV</span>
+        <span class="tab-btn" data-slide="2">Конкуренты</span>
+        <span class="tab-btn active" data-slide="3">Конверсия</span>
+        <span class="tab-btn" data-slide="4">Кастомизация</span>
+        <span class="tab-btn" data-slide="5">Брошенные корзины</span>
+    </div>
+
+    <div class="features-carousel-viewport">
+        <div class="features-carousel-track" id="features-track">
+            
+            <div class="features-slide-card">
+                <div class="card-body">
+                    <h3 class="stat-value">-25%</h3>
+                    <p class="subtitle-text">снижение возвратов</p>
+                    <p class="desc-text">Примерка одежды онлайн повышает уверенность клиента в покупке и уменьшает количество возвратов товара</p>
+                </div>
+            </div>
+
+            <div class="features-slide-card">
+                <div class="card-body">
+                    <h3 class="stat-value">+20%</h3>
+                    <p class="subtitle-text">Рост LTV</p>
+                    <p class="desc-text">Увеличение повторных продаж за счёт точного выбора с первой покупки</p>
+                </div>
+            </div>
+
+            <div class="features-slide-card">
+                <div class="card-body">
+                    <h3 class="title-bold">Выделение</h3>
+                    <p class="subtitle-text">среди конкурентов</p>
+                    <p class="desc-text">Виджет добавляет в покупку интерактив, который запоминается клиентам и выделяет среди конкурентов</p>
+                </div>
+            </div>
+
+            <div class="features-slide-card">
+                <div class="card-body">
+                    <h3 class="stat-value">+20%</h3>
+                    <p class="subtitle-text">рост конверсии в покупку</p>
+                    <p class="desc-text">Показ одежды сразу на клиенте увеличивает количество и качество его покупок</p>
+                </div>
+            </div>
+
+            <div class="features-slide-card">
+                <div class="card-body">
+                    <h3 class="title-bold">Кастомизация</h3>
+                    <p class="subtitle-text">примерочной</p>
+                    <p class="desc-text">Настройте стиль виджета со своими цветами и особенностями идеально подходящими под ваш сайт</p>
+                </div>
+            </div>
+
+            <div class="features-slide-card">
+                <div class="card-body">
+                    <h3 class="stat-value text-blue-arrow"><i class="fas fa-arrow-down"></i> 35%</h3>
+                    <p class="subtitle-text">брошенных корзин</p>
+                    <p class="desc-text">Повышение уверенности при выборе товара за счет показа сразу на клиенте снижает количество брошенных корзин</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="features-nav-buttons">
+        <button class="feat-nav-btn" id="feat-prev"><i class="fas fa-arrow-left"></i></button>
+        <button class="feat-nav-btn" id="feat-next"><i class="fas fa-arrow-right"></i></button>
+    </div>
+</section>
+<!-- --- СЕКЦИЯ КАК УСТАНОВИТЬ --- -->
+<section class="install-section" id="how-to-install">
+    <h2>КАК УСТАНОВИТЬ</h2>
+    <p class="install-subtitle">Три шага для подключения виджета</p>
+
+    <div class="install-grid">
+        <!-- Шаг 1 -->
+        <div class="install-step">
+            <div class="step-number">1</div>
+            <h3>Зарегистрируйте компанию</h3>
+            <p>Создайте аккаунт на clozly.ru, укажите данные своего магазина и запустите пробный период</p>
+        </div>
+
+        <!-- Шаг 2 -->
+        <div class="install-step">
+            <div class="step-number">2</div>
+            <h3>Настройте виджет</h3>
+            <p>В личном кабинете выберите: цвета, фон, тексты для вашего виджета на сайте</p>
+        </div>
+
+        <!-- Шаг 3 -->
+        <div class="install-step">
+            <div class="step-number">3</div>
+            <h3>Установка кода на сайт</h3>
+            <p>Скопируйте код и вставьте на свой сайт</p>
+        </div>
+    </div>
+
+    <!-- Нижняя плашка помощи из шаблона -->
+    <div class="help-box">
+        <p>Нужна помощь с установкой?</p>
+        <h3>Мы можем установить виджет на ваш сайт бесплатно</h3>
+        <a href="https://t.me/Gysqy" class="btn-manager">Написать менеджеру</a>
+    </div>
+</section>
+<section class="dashboard-section" id="dashboard-features">
+    <h2>Личный кабинет</h2>
+    <p class="dashboard-section-subtitle">Анализируйте как примерочная влияет на продажи и принимайте решения на основе статистики</p>
+    
+    <div class="dashboard-features-container">
+        <div class="dash-steps-menu">
+            
+            <div class="dash-menu-item active" data-dash-step="0">
+                <div class="dash-step-header">
+                    <div class="dash-icon-box">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3>Статистика</h3>
+                </div>
+                <div class="dash-step-description">
+                    <p>генерация, топ товаров, динамика по дням</p>
+                </div>
+            </div>
+
+            <div class="dash-menu-item" data-dash-step="1">
+                <div class="dash-step-header">
+                    <div class="dash-icon-box">
+                        <i class="fa-solid fa-credit-card"></i>
+                    </div>
+                    <h3>Оплата</h3>
+                </div>
+                <div class="dash-step-description">
+                    <p>оплата тарифов и историй платежей</p>
+                </div>
+            </div>
+
+            <div class="dash-menu-item" data-dash-step="2">
+                <div class="dash-step-header">
+                    <div class="dash-icon-box">
+                        <i class="fa-solid fa-palette"></i>
+                    </div>
+                    <h3>Кастомизация виджета</h3>
+                </div>
+                <div class="dash-step-description">
+                    <p>цвета, тексты и фон примерочной</p>
+                </div>
+            </div>
+
+            <div class="dash-menu-item" data-dash-step="3">
+                <div class="dash-step-header">
+                    <div class="dash-icon-box">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <h3>Лимиты</h3>
+                </div>
+                <div class="dash-step-description">
+                    <p>Ограничение кол-во генераций на пользователя в час или в день</p>
+                </div>
+            </div>
+
+            <div class="dash-menu-item" data-dash-step="4">
+                <div class="dash-step-header">
+                    <div class="dash-icon-box">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <h3>API и документация</h3>
+                </div>
+                <div class="dash-step-description">
+                    <p>ключ интеграций и инструкция по установке</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="dash-preview-display">
+            <div class="dash-img-wrapper active" data-dash-preview="0">
+                <img src="/img/analytics_img.png" alt="Статистика">
+            </div>
+            <div class="dash-img-wrapper" data-dash-preview="1">
+                <img src="/img/oplata_img.png" alt="Оплата">
+            </div>
+            <div class="dash-img-wrapper" data-dash-preview="2">
+                <img src="/img/castom_tryon_img.png" alt="Кастомизация виджета">
+            </div>
+            <div class="dash-img-wrapper" data-dash-preview="3">
+                <img src="/img/limits_img.png" alt="Лимиты">
+            </div>
+            <div class="dash-img-wrapper" data-dash-preview="4">
+                <img src="/img/integration_img.png" alt="API и документация">
+            </div>
+        </div>
+    </div>
+</section>
+<section class="pricing-section" id="pricing">
+    <h2>Тарифы</h2>
+
+    <!-- Сетка из 3 основных карточек -->
+    <div class="pricing-grid">
+        <!-- КАРТОЧКА: Премиум -->
+        <div class="pricing-card">
+            <div class="card-header-box">
+                <h3>Премиум</h3>
+                <div class="price-value">21 980 руб/мес</div>
+            </div>
+            <ul class="pricing-features">
+                <li>- 2000 генераций</li>
+                <li>- Приоритетная поддержка</li>
+                <li class="green-info">~10 ₽ за генерацию</li>
+            </ul>
+            <div class="card-footer-box">
+                <a href="/register.html" class="btn-pricing">Попробовать бесплатно <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+
+        <!-- КАРТОЧКА: Про (Выделенная по центру) -->
+        <div class="pricing-card pro-card">
+            <div class="card-header-box">
+                <h3>Про</h3>
+                <div class="price-value">10 990 руб/мес</div>
+            </div>
+            <ul class="pricing-features">
+                <li>- 1000 генераций</li>
+                <li class="green-info">~10 ₽ за генерацию</li>
+            </ul>
+            <div class="card-footer-box">
+                <a href="/register.html" class="btn-pricing">Попробовать бесплатно <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+
+        <!-- КАРТОЧКА: Старт -->
+        <div class="pricing-card">
+            <div class="card-header-box">
+                <h3>Старт</h3>
+                <div class="price-value">5 490 руб/мес</div>
+            </div>
+            <ul class="pricing-features">
+                <li>- 500 генераций</li>
+                <li class="green-info">~11 ₽ за генерацию</li>
+            </ul>
+            <div class="card-footer-box">
+                <a href="/register.html" class="btn-pricing">Попробовать бесплатно <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ниже: Полноширинная плашка индивидуального тарифа -->
+    <div class="individual-tariff-box">
+        <div class="individual-left">
+            <h3>Подобрать индивидуальный тариф</h3>
+            <ul class="pricing-features">
+                <li>- Неограниченные примерки</li>
+                <li>- Отдельный менеджер</li>
+                <li>- Цена и детали - по запросу</li>
+            </ul>
+        </div>
+        <div class="individual-right">
+            <a href="/register.html" class="btn-pricing btn-submit-request">Подать заявку <i class="fas fa-chevron-right"></i></a>
+        </div>
+    </div>
+</section>
+<!-- ========================================================
+   --- ОБНОВЛЕННАЯ СЕКЦИЯ FAQ И КНОПОК ПО МАКЕТУ ПОЛЬЗОВАТЕЛЯ ---
+   ======================================================== -->
+<section class="faq-section" id="faq">
+    <h2>Частые Вопросы</h2>
+    
+    <!-- Вопрос 1 (Открыт по умолчанию как на макете) -->
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Как работает виртуальная примерка?</span>
+            <div class="faq-toggle-icon">＋</div>
+        </div>
+        <div class="faq-answer">
+            Покупатель загружает свое фото, выбирает товар, и AI создает реалистичное изображение с примеркой до 30 секунд. Технология сохраняет пропорции тела и черты лица.
+        </div>
+    </div>
+
+    <!-- Вопрос 2 -->
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Как быстро можно подключить примерочную к сайту?</span>
+            <div class="faq-toggle-icon">＋</div>
+        </div>
+        <div class="faq-answer">
+            Установка занимает 15 минут. Просто скопируйте код из личного кабинета и вставьте на страницы товаров. Никаких сложных настроек не требуется.
+        </div>
+    </div>
+
+    <!-- Вопрос 3 -->
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Какие платформы поддерживаются?</span>
+            <div class="faq-toggle-icon">＋</div>
+        </div>
+        <div class="faq-answer">
+            Виджет работает на любом сайте: Tilda, Битрикс, самописные решения. Нужен только доступ к HTML коду страницы.
+        </div>
+    </div>
+
+    <!-- Вопрос 4 -->
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Сколько стоит и какие тарифы доступны?</span>
+            <div class="faq-toggle-icon">＋</div>
+        </div>
+        <div class="faq-answer">
+            Доступны три тарифных плана:<br>
+            • <strong>Старт</strong> - 500 генераций - 5990 руб/мес<br>
+            • <strong>Про</strong> - 2000 генераций - 22 980 руб/мес<br>
+            • <strong>Индивидуальный</strong> - по запросу под ваши объёмы.
+        </div>
+    </div>
+
+    <!-- Вопрос 5 -->
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Есть ли бесплатный тестовый период?</span>
+            <div class="faq-toggle-icon">＋</div>
+        </div>
+        <div class="faq-answer">
+            Да, вы можете попробовать Clozly бесплатно на 7 дней, чтобы полноценно оценить, как наша технология ИИ работает именно в вашем магазине.
+        </div>
+    </div>
+
+    <!-- Вопрос 6 -->
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Как защищены данные пользователей?</span>
+            <div class="faq-toggle-icon">＋</div>
+        </div>
+        <div class="faq-answer">
+            Все фото шифруются при передаче по протоколу SSL, хранятся на защищенных изолированных серверах и автоматически полностью удаляются через 30 дней. Мы строго соблюдаем требования 152-ФЗ о персональных данных.
+        </div>
+    </div>
+
+    <!-- Вопрос 7 -->
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Что даёт примерочная магазину?</span>
+            <div class="faq-toggle-icon">＋</div>
+        </div>
+        <div class="faq-answer">
+            Яркое выделение среди конкурентов, уверенный рост конверсии в покупку, заметное снижение процента брошенных корзин и сокращение расходов на возвраты.
+        </div>
+    </div>
+
+    <!-- Вопрос 8 -->
+    <div class="faq-item">
+        <div class="faq-question">
+            <span>Есть ли поддержка и помощь при подключении?</span>
+            <div class="faq-toggle-icon">＋</div>
+        </div>
+        <div class="faq-answer">
+            Да, мы полностью помогаем со всей технической установкой и кастомизацией. Вы всегда можете написать нашему менеджеру в Telegram для оперативной поддержки.
+        </div>
+    </div>
+</section>
+
+<!-- Фиолетовый блок "Готовы начать?" -->
+<div class="cta-box-container">
+    <div class="cta-purple-card">
+        <h3>Готовы начать?</h3>
+        <p>Присоединяйтесь к магазинам, которые уже используют AI примерочную Clozly</p>
+        <div class="cta-buttons-flex">
+            <a href="#" class="btn-cta-blue">Попробовать бесплатно</a>
+            <a href="#" class="btn-cta-blue" style="background: #11286b;">Смотреть Демо-магазины</a>
+        </div>
+    </div>
+</div>
+<section class="clozly-footer-section">
+  <div class="clozly-footer-container">
+    
+    <!-- Левая часть: Логотип (PNG), слоган и кнопка -->
+    <div class="clozly-footer-left">
+      <div class="clozly-footer-logo-wrapper">
+        <!-- Замени src на путь к твоему PNG-логотипу из шапки -->
+        <img src="/img/clozly_logo.png" alt="CLOZLY" class="clozly-footer-logo-img">
+      </div>
+      
+      <p class="clozly-footer-tagline">— новый стандарт онлайн шопинга</p>
+      
+      <a href="#" class="clozly-footer-btn">Попробовать бесплатно</a>
+    </div>
+
+    <!-- Правая часть: QR-код -->
+    <div class="clozly-footer-right">
+      <div class="clozly-qrcode-wrapper">
+        <!-- Замени src на свой URL QR-кода -->
+        <img src="/img/qr.jpg" alt="QR Code" class="clozly-qrcode-img">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Нижние ссылки (документы) -->
+  <div class="clozly-footer-links">
+    <a href="#">Политика конфиденциальности</a>
+    <a href="#">Пользовательское соглашение</a>
+    <a href="#">публичная оферта</a>
+    <a href="#">Связаться с нами</a>
+  </div>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.querySelector('.before-after-slider');
+    const handle = document.querySelector('.slider-handle');
+    const imgAfter = document.querySelector('.img-after');
+
+    if (!slider || !handle || !imgAfter) return;
+
+    let isDragging = false;
+
+    // Функция обновления положения слайдера
+    function moveSlider(clientX) {
+        const rect = slider.getBoundingClientRect();
+        // Получаем координату X относительно самого слайдера
+        let x = clientX - rect.left;
+        
+        // Ограничиваем движение в пределах слайдера (от 0 до 100%)
+        if (x < 0) x = 0;
+        if (x > rect.width) x = rect.width;
+        
+        const percentage = (x / rect.width) * 100;
+        
+        // Двигаем белую линию
+        handle.style.left = `${percentage}%`;
+        // Обрезаем правую картинку (всё, что справа от линии, показывается)
+        imgAfter.style.clipPath = `polygon(${percentage}% 0, 100% 0, 100% 100%, ${percentage}% 100%)`;
+    }
+
+    // Обработчики для мыши
+    handle.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        e.preventDefault();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        moveSlider(e.clientX);
+    });
+
+    // Обработчики для тач-скринов (мобильные устройства)
+    handle.addEventListener('touchstart', (e) => {
+        isDragging = true;
+    });
+
+    window.addEventListener('touchend', () => {
+        isDragging = false;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        if (e.touches.length > 0) {
+            moveSlider(e.touches[0].clientX);
+        }
+    });
+});
+</script>
+<script>
+    const pricingSwitch = document.getElementById('pricing-switch');
+    
+    const priceStart = document.getElementById('price-start');
+    const pricePro = document.getElementById('price-pro');
+    const featStartGen = document.getElementById('feat-start-gen');
+    const featProGen = document.getElementById('feat-pro-gen');
+</script>
+<script>
+    /* --- FAQ АККОРДЕОН --- */
+    document.querySelectorAll('.faq-question').forEach(item => {
+        item.addEventListener('click', () => {
+            const parent = item.parentElement;
+            const isCurrentlyActive = parent.classList.contains('active');
+            
+            // Закрываем все остальные плашки, если нужно
+            document.querySelectorAll('.faq-item').forEach(el => {
+                el.classList.remove('active');
+                el.querySelector('.faq-toggle-icon').textContent = '＋';
+            });
+
+            // Если кликнули по закрытому, то открываем его
+            if (!isCurrentlyActive) {
+                parent.classList.add('active');
+                parent.querySelector('.faq-toggle-icon').textContent = '✕';
+            }
+        });
+    });
+
+    /* --- ПОЯВЛЕНИЕ ЛИЧНОГО КАБИНЕТА ПРИ СКРОЛЛЕ --- */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.3 });
+
+</script>
+<script>
+/* --- ИЗОЛИРОВАННАЯ КАРУСЕЛЬ С ТОЧНЫМ ПОПАДАНИЕМ В ЦЕНТР И АВТОПЛЕЕМ --- */
+(function() {
+    const featTrack = document.getElementById('features-track');
+    if (!featTrack) return;
+
+    // Сначала удаляем все старые клонированные элементы, если они остались от предыдущего запуска
+    const existingClones = featTrack.querySelectorAll('.cloned');
+    existingClones.forEach(clone => clone.remove());
+
+    // Теперь берем строго чистые, оригинальные слайды
+    const featSlides = Array.from(featTrack.children);
+    const featTabs = document.querySelectorAll('.features-tabs .tab-btn');
+    const featPrevBtn = document.getElementById('feat-prev');
+    const featNextBtn = document.getElementById('feat-next');
+
+    // Количество оригинальных слайдов (например, 6)
+    const slidesCount = featSlides.length;
+    if (slidesCount === 0) return;
+
+    // Клонируем оригинальные слайды: последние в начало, первые в конец
+    // Делаем это через фрагмент памяти, чтобы не вызывать лагов рендеринга
+    const beforeFragment = document.createDocumentFragment();
+    const afterFragment = document.createDocumentFragment();
+
+    featSlides.forEach(slide => {
+        const cloneBefore = slide.cloneNode(true);
+        const cloneAfter = slide.cloneNode(true);
+        
+        cloneBefore.classList.add('cloned');
+        cloneAfter.classList.add('cloned');
+        
+        beforeFragment.appendChild(cloneBefore);
+        afterFragment.appendChild(cloneAfter);
+    });
+
+    // Вставляем клоны в DOM за один проход
+    featTrack.insertBefore(beforeFragment, featTrack.firstChild);
+    featTrack.appendChild(afterFragment);
+
+    // Получаем обновленный массив ВСЕХ слайдов в треке (клоны + оригинал)
+    const allSlides = Array.from(featTrack.children);
+
+    // Индекс 3 ("Конверсия") по умолчанию в центре оригинальной группы
+    let featCurrentIndex = 3; 
+    let featAutoPlayTimer = null;
+    let isTransitioning = false; // Флаг для блокировки быстрого спам-клика во время анимации
+
+    function updateFeatCarouselPosition() {
+        const isMobile = window.innerWidth <= 768;
+        const slideWidth = isMobile ? 290 : 360;
+        const gap = 40;
+        
+        const baseCenterOffset = - (slideWidth / 2);
+        
+        // Позиция центра смещается ровно на количество клонов, добавленных в начало
+        const totalIndexInTrack = featCurrentIndex + slidesCount;
+        
+        const stepOffset = - (totalIndexInTrack * (slideWidth + gap));
+        const finalTransformX = baseCenterOffset + stepOffset;
+        
+        featTrack.style.transform = `translateX(${finalTransformX}px)`;
+
+        // Вычисляем нормализованный индекс для табов (всегда от 0 до slidesCount - 1)
+        const normalizedIndex = ((featCurrentIndex % slidesCount) + slidesCount) % slidesCount;
+
+        // Раздаем классы фокуса карточкам по их фактическому положению в текущий момент времени
+        allSlides.forEach((slide, idx) => {
+            slide.classList.remove('active-focus', 'side-visible');
+            
+            if (idx === totalIndexInTrack) {
+                slide.classList.add('active-focus');
+            } else if (idx === totalIndexInTrack - 1 || idx === totalIndexInTrack + 1) {
+                slide.classList.add('side-visible');
+            }
+        });
+
+        // Подсвечиваем соответствующий текстовый таб сверху
+        featTabs.forEach(tab => {
+            const tabIndex = parseInt(tab.getAttribute('data-slide'));
+            if (tabIndex === normalizedIndex) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+    }
+
+    // Мгновенный бесшовный перенос позиции на оригинальную группу карточек
+    function handleTransitionEnd() {
+        isTransitioning = false;
+
+        // Если ушли вправо в зону правых клонов
+        if (featCurrentIndex >= slidesCount) {
+            featTrack.style.transition = 'none';
+            featCurrentIndex = featCurrentIndex % slidesCount;
+            updateFeatCarouselPosition();
+            // Возвращаем transition в поток выполнения браузера
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    featTrack.style.transition = '';
+                });
+            });
+        }
+        // Если ушли влево в зону левых клонов (меньше 0)
+        else if (featCurrentIndex < 0) {
+            featTrack.style.transition = 'none';
+            featCurrentIndex = (featCurrentIndex % slidesCount + slidesCount) % slidesCount;
+            updateFeatCarouselPosition();
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    featTrack.style.transition = '';
+                });
+            });
+        }
+    }
+
+    featTrack.addEventListener('transitionend', handleTransitionEnd);
+
+    function moveFeatNext() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        featTrack.style.transition = ''; 
+        featCurrentIndex++;
+        updateFeatCarouselPosition();
+    }
+
+    function moveFeatPrev() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        featTrack.style.transition = ''; 
+        featCurrentIndex--;
+        updateFeatCarouselPosition();
+    }
+
+    // Автопрокрутка
+    function startFeatAutoPlay() {
+        stopFeatAutoPlay(); 
+        featAutoPlayTimer = setInterval(moveFeatNext, 7000);
+    }
+
+    function stopFeatAutoPlay() {
+        if (featAutoPlayTimer) clearInterval(featAutoPlayTimer);
+    }
+
+    // Навешиваем обработчики на кнопки управления
+    if (featNextBtn) {
+        featNextBtn.addEventListener('click', () => {
+            moveFeatNext();
+            startFeatAutoPlay();
+        });
+    }
+
+    if (featPrevBtn) {
+        featPrevBtn.addEventListener('click', () => {
+            moveFeatPrev();
+            startFeatAutoPlay();
+        });
+    }
+
+    // Переключение кликами по табам
+    featTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            if (isTransitioning) return;
+            featTrack.style.transition = '';
+            
+            const targetTab = parseInt(tab.getAttribute('data-slide'));
+            const currentNormalized = ((featCurrentIndex % slidesCount) + slidesCount) % slidesCount;
+            
+            // Находим кратчайшее направление прокрутки до таба
+            let diff = targetTab - currentNormalized;
+            if (diff > slidesCount / 2) diff -= slidesCount;
+            if (diff < -slidesCount / 2) diff += slidesCount;
+            
+            featCurrentIndex += diff;
+            
+            updateFeatCarouselPosition();
+            startFeatAutoPlay();
+        });
+    });
+
+    // Ресайз окна без анимации сдвига
+    window.addEventListener('resize', () => {
+        featTrack.style.transition = 'none';
+        updateFeatCarouselPosition();
+    });
+
+    // Стартовая инициализация
+    updateFeatCarouselPosition();
+    startFeatAutoPlay();
+})();
+
+/* --- АНИМАЦИЯ И АВТОПЛЕЙ СЕКЦИИ "ЛИЧНЫЙ КАБИНЕТ" --- */
+(function() {
+    const dashItems = document.querySelectorAll('.dash-menu-item');
+    const dashPreviews = document.querySelectorAll('.dash-img-wrapper');
+    
+    if (dashItems.length === 0) return;
+
+    let dashCurrentIndex = 0;
+    let dashTimer = null;
+    const dashTotal = dashItems.length;
+
+    // Переключение шага
+    function switchDashboardStep(targetIndex) {
+        dashCurrentIndex = targetIndex;
+
+        // Обновляем состояние левых кнопок меню
+        dashItems.forEach((item, idx) => {
+            if (idx === dashCurrentIndex) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        // Плавный Fade-эффект для картинок справа в белом окне
+        dashPreviews.forEach((preview, idx) => {
+            if (idx === dashCurrentIndex) {
+                preview.classList.add('active');
+            } else {
+                preview.classList.remove('active');
+            }
+        });
+    }
+
+    // Автопрокрутка к следующему шагу
+    function autoNextDashboardStep() {
+        let nextIndex = (dashCurrentIndex + 1) % dashTotal;
+        switchDashboardStep(nextIndex);
+    }
+
+    // Запуск бесконечного цикла (каждые 7 секунд)
+    function startDashAutoPlay() {
+        stopDashAutoPlay();
+        dashTimer = setInterval(autoNextDashboardStep, 7000);
+    }
+
+    function stopDashAutoPlay() {
+        if (dashTimer) clearInterval(dashTimer);
+    }
+
+    // Обработка ручных кликов по пунктам личного кабинета
+    dashItems.forEach((item) => {
+        item.addEventListener('click', () => {
+            const stepId = parseInt(item.getAttribute('data-dash-step'));
+            
+            // Включаем нужный пункт
+            switchDashboardStep(stepId);
+            
+            // Перезапускаем таймер, чтобы автоматический сдвиг не перебил пользователя
+            startDashAutoPlay();
+        });
+    });
+
+    // Запуск работы при полной загрузке страницы
+    window.addEventListener('load', () => {
+        switchDashboardStep(0); // Стартуем со "Статистики"
+        startDashAutoPlay();
+    });
+})();
+</script>
+</body>
+</html>

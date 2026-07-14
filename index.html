@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clozly - Панель управления</title>
+    <link rel="icon" href="/favicon.ico">
+     <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/style_bgg.css">
+<style>
+    /* ПОЛНАЯ СИНХРОНИЗАЦИЯ С ДИЗАЙНОМ ANALYTICS.HTML */
+    @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Inter:wght@300;400;600;700&display=swap');
+
+    :root {
+        --font-header: 'Dela Gothic One', sans-serif;
+        --font-main: 'Inter', sans-serif;
+        --accent: #49b7f7;
+        --bg-dark: #020408;
+        --card-bg: rgba(10, 30, 90, 0.3); /* Цвет из widget-card аналитики */
+        --sidebar-width: 280px;
+    }
+
+    /* 1. ТОЧНЫЙ ФОН */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: linear-gradient(180deg, #020408 0%, #050c1f 50%, #2159b3 100%);
+        background-attachment: fixed;
+        color: #ffffff;
+        font-family: var(--font-main);
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* 2. БОКОВАЯ ПАНЕЛЬ (SIDEBAR) — ТОЧЬ-В-ТОЧЬ */
+    nav, .sidebar {
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        padding: 40px 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+    }
+
+    nav a, .sidebar a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        padding: 15px 20px;
+        margin-bottom: 10px;
+        border-radius: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    nav a:hover, nav a.active {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--accent);
+    }
+
+    /* 3. КОНТЕНТНАЯ ОБЛАСТЬ */
+    .container, main, .main-content {
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        padding: 60px 40px;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* 4. СТИЛЬ БЛОКОВ (WIDGET CARDS) */
+    .dashboard-item, .card, .widget-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px; /* Скругление как в аналитике */
+        padding: 35px;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .dashboard-item:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent);
+    }
+
+    /* 5. ЗАГОЛОВКИ */
+    h1, h2, h3, .logo {
+        font-family: var(--font-header);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 30px;
+    }
+
+    /* 6. КНОПКИ ПАНЕЛИ (ИСПРАВЛЕНО) */
+    button, .btn, .top-panel button {
+        background: #003ee7 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 14px 28px !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+        font-family: var(--font-main);
+        cursor: pointer;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    button:hover, .btn:hover {
+        background: var(--accent) !important;
+        box-shadow: 0 0 20px rgba(73, 183, 247, 0.4);
+        transform: scale(1.03);
+    }
+
+    /* 7. ЭЛЕМЕНТЫ ФОРМ И ССЫЛКИ */
+    #tryon-link-display {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px dashed var(--accent);
+        color: var(--accent);
+        padding: 20px;
+        border-radius: 15px;
+        font-family: monospace;
+        font-size: 1.1rem;
+        text-align: center;
+        display: block;
+        margin: 20px 0;
+    }
+    #api-key-display {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px dashed var(--accent);
+        color: var(--accent);
+        padding: 20px;
+        border-radius: 15px;
+        font-family: monospace;
+        font-size: 1.1rem;
+        text-align: center;
+        display: block;
+        margin: 20px 0;
+    }
+
+    /* Верхняя панель кнопок */
+    .top-panel, .header-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+
+    .site-nav {
+    align-items: stretch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Прижимает всё к началу (вверх) */
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin-top: 0 !important; /* Убираем лишние отступы сверху */
+    top: 10%;
+}
+
+/* КНОПКИ (Ссылки) */
+.site-nav a, .site-nav button {
+    all: unset;
+    padding: 12px 20px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-decoration: none !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    border: 1px solid transparent !important;
+    margin-bottom: 0 !important; /* Гарантируем отсутствие отступов снизу */
+    text-align: center;
+}
+
+/* ВАЖНО: Если элемент должен быть блочным, когда он виден, 
+   но при этом JS может его скрывать (inline style display:none)
+*/
+.site-nav a:not([style*="display: none"]), 
+.site-nav button:not([style*="display: none"]) {
+    display: block; 
+}
+
+.site-nav a:hover, 
+.site-nav a.active, 
+.site-nav button:hover {
+    background: rgba(73, 183, 247, 0.1) !important;
+    color: var(--accent) !important;
+    border: 1px solid rgba(73, 183, 247, 0.2) !important;
+}
+
+/* 2. СТИЛИЗАЦИЯ САЙДБАРА ПОД ОБЩИЙ ВИД */
+header.main-header {
+    all: unset;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    justify-content: flex-start !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 40px 0 !important;
+    z-index: 10000 !important;
+    box-sizing: border-box !important;
+}
+
+header.main-header h1 {
+    font-family: var(--font-header) !important;
+    font-size: 2rem !important;
+    color: #fff !important;
+    text-align: center !important;
+    margin-bottom: 50px !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+header.main-header .header-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Выравнивание всего содержимого по верхней границе */
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 15px !important;
+    margin: 0 !important;
+}
+
+    /* Адаптивность для мобильных */
+    @media (max-width: 1024px) {
+        nav, .sidebar { width: 85px; padding: 20px 10px; }
+        nav a span, .sidebar a span { display: none; }
+        .container, main, .main-content { margin-left: 85px; width: calc(100% - 85px); padding: 30px 20px; }
+    }
+</style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="main-header">
+            <div class="container header-container">
+                <h1>Clozly</h1>
+
+                <div class="burger-menu" id="burger-menu">
+                    <div class="bar1"></div>
+                    <div class="bar2"></div>
+                    <div class="bar3"></div>
+                </div>
+
+                <nav id="main-nav" class="site-nav">
+                    <span id="user-info"></span>
+                    
+                    <a href="analytics.html" id="analytics-link">Аналитика</a>
+                    <a href="#" id="tryon-menu-link">Примерка</a>
+                    <a href="tarifs.html" id="tarifs-panel-link">Тарифы</a>
+                    <a href="faq.html" id="tarifs-panel-link">Поддержка</a>
+                    <a href="profile.html" id="tarifs-panel-link">Профиль</a>
+                    <a href="login.html" id="login-link" class="btn-primary" style="display:none;">Вход</a>
+                    <a href="register.html" id="register-link" class="btn-primary" style="display:none;">Регистрация</a>
+                    <button id="logout-button" style="display:none;">Выход</button>
+                    <a href="admin.html" id="admin-panel-link" style="display:none;">Админ Панель</a>
+                </nav>
+            </div>
+        </header>
+            <div id="user-api-key-container">
+            <h2>Ваш API-ключ</h2>
+            <div class="api-key-display-box" style="display: flex; align-items: center; justify-content: space-between;">
+                <span id="api-key-display">Ключ не найден</span>
+                <button id="copy-api-key-button" class="btn-target" style="margin-left: 10px;">Копировать ключ</button>
+            </div>
+    
+            <div id="user-tryon-link-container" style="margin-top: 40px;">
+                <h3>Ссылка для примерки</h3>
+                <div class="api-key-display-box" style="display: flex; align-items: center; justify-content: space-between;">
+                    <span id="tryon-link-display">Ссылка не найдена</span>
+                    <button id="copy-tryon-link-button" class="btn-target">Копировать ссылку</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="message" class="message-box" style="display:none;"></div>
+    </div>
+
+    <script src="js/menu.js"></script> 
+    <script src="js/index.js" type="module"></script>
+    <script src="js/auth_client.js" type="module"></script>
+    <script src="js/utils.js" type="module"></script>
+    <script type="module">
+    // Импортируем функцию сохранения, если она у вас в utils.js, 
+    // либо реализуем сохранение напрямую в localStorage
+    
+    function autoLoginFromUrl() {
+        // Получаем параметры из текущего URL
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Список полей, которые мы ищем в ссылке
+        const fields = ['token', 'role', 'id', 'api_token', 'tryonId'];
+        const authData = {};
+        let hasData = false;
+
+        fields.forEach(field => {
+            const value = urlParams.get(field);
+            if (value) {
+                authData[field] = value;
+                hasData = true;
+            }
+        });
+
+        // Если в ссылке был хотя бы один параметр (например, token)
+        if (hasData) {
+            console.log('Обнаружены данные авторизации в URL, сохраняем...');
+            
+            // Сохраняем каждое значение в localStorage
+            // Мы приводим ключи к тому виду, который ожидает ваше приложение
+            if (authData.token) localStorage.setItem('token', authData.token);
+            if (authData.role) localStorage.setItem('userRole', authData.role);
+            if (authData.id) localStorage.setItem('userId', authData.id);
+            if (authData.api_token) localStorage.setItem('api_token', authData.api_token);
+            if (authData.tryonId) localStorage.setItem('tryonId', authData.tryonId);
+
+            // Опционально: очищаем URL от параметров после сохранения, 
+            // чтобы при перезагрузке они не мозолили глаза
+            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+            
+            console.log('Данные успешно сохранены в LocalStorage');
+            
+            // Если нужно сразу перенаправить пользователя на главную после сохранения:
+            // window.location.href = 'index.html'; 
+        }
+    }
+
+    // Запускаем проверку сразу при загрузке скрипта
+    autoLoginFromUrl();
+</script>
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.replace('https://l.clozly.ru/');
+        }
+        const tryonId = localStorage.getItem('tryonId')
+        const fullLink = `https://clozly.ru/telegram-tryon.html?tryon_id=${tryonId}`; 
+
+// 1. Обновляем текстовый блок в центре страницы (как у вас сейчас)
+document.getElementById('tryon-link-display').textContent = fullLink;
+
+// 2. ДОБАВЬТЕ ЭТУ СТРОКУ: Обновляем атрибут href у кнопки в меню
+const menuTryonLink = document.getElementById('tryon-menu-link');
+if (menuTryonLink) {
+    menuTryonLink.href = fullLink;
+}
+    </script>
+</body>
+</html>

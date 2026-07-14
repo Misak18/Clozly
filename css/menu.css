@@ -1,0 +1,147 @@
+/* ==================\
+   CSS ПЕРЕМЕННЫЕ (для примера)
+   ================== */
+
+/* ИМПОРТ НОВЫХ ШРИФТОВ */
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+:root {
+    --primary: #49b7f7; 
+    --text-dark: #3b9aff; 
+    --text-light: #FFFFFF; 
+    --font-family-header: 'Dela Gothic One', sans-serif;
+    --font-family: 'Open Sans', sans-serif;
+}
+
+/* ==================\
+   ОБЩИЕ СТИЛИ И Z-INDEX
+   ================== */
+
+.main-header {
+    background-color: transparent; 
+    padding: 15px 0;
+    position: relative; /* КРИТИЧНО: Точка отсчета для position: absolute */
+    z-index: 1002; 
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-family-header);
+}
+
+/* Иконка бургер-меню (стили по умолчанию) */
+.burger-menu {
+    display: none; /* Скрыт на десктопе */
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: space-around;
+    position: relative; /* Базовое позиционирование для анимации */
+    z-index: 1003; 
+}
+
+.burger-menu div {
+    width: 100%;
+    height: 3px; 
+    background-color: var(--text-light); 
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Десктопная навигация */
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: none; 
+}
+
+/* Стили для элементов меню */
+.site-nav > a, .site-nav > button, .site-nav > span {
+    color: var(--text-light); 
+    font-size: 1.1rem; 
+    font-weight: 600;
+    padding: 5px 12px; 
+    text-decoration: none; 
+    background: none; 
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-family-header);
+}
+
+/* ==================\
+   МЕДИАЗАПРОС (Мобильная версия)
+   ================== */
+@media (max-width: 768px) {
+    
+    /* 1. ИСПРАВЛЕНИЕ: БУРГЕР-ИКОНКА (Абсолютное позиционирование и размер) */
+    .burger-menu {
+        display: flex; /* Показываем иконку */
+        
+        /* === АБСОЛЮТНОЕ ПОЗИЦИОНИРОВАНИЕ === */
+        position: absolute; /* Позиционируем относительно .main-header */
+        top: 15px;      /* Отступ от верхнего края */
+        right: 15px;    /* Отступ от правого края */
+        
+        /* === УВЕЛИЧЕНИЕ РАЗМЕРА === */
+        width: 38px;  /* Увеличенная ширина */
+        height: 32px; /* Увеличенная высота */
+        
+        z-index: 1003; 
+    }
+
+    /* УВЕЛИЧЕНИЕ ТОЛЩИНЫ ПОЛОСОК */
+    .burger-menu div {
+        height: 4px; /* Увеличиваем толщину полосок */
+        background-color: var(--text-light); /* Гарантируем, что светлая на темном фоне */
+    }
+
+    /* Анимация иконки при открытии */
+    .burger-menu.open .bar1 { transform: rotate(-45deg) translate(-5px, 6px); }
+    .burger-menu.open .bar2 { opacity: 0; }
+    .burger-menu.open .bar3 { transform: rotate(45deg) translate(-5px, -6px); }
+    
+    /* 2. Навигация - по умолчанию скрыта */
+    .site-nav {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Скрыто */
+        width: 70%; 
+        max-width: 350px; 
+        height: 100vh;
+        background-color: #0056b3; 
+        flex-direction: column; 
+        justify-content: flex-start;
+        padding-top: 80px; 
+        box-shadow: -2px 0 10px #0056b3;
+        transition: right 0.3s ease-in-out;
+        z-index: 1000; 
+        gap: 0;
+    }
+
+    /* 3. ИСПРАВЛЕНИЕ: Правило для ОТКРЫТИЯ меню (СЕЛЕКТОР DATA-АТРИБУТА) */
+    .site-nav[data-menu-open="true"] {
+        right: 0; 
+    }
+
+    /* 4. Стили элементов внутри меню */
+    .site-nav > a, .site-nav > button, .site-nav > span {
+        width: 100%;
+        text-align: center;
+        padding: 15px 0;
+        display: block; 
+        box-sizing: border-box;
+        border-bottom: 1px solid #333; 
+        color: var(--text-light); 
+    }
+    
+    /* Блокируем скролл */
+    body.no-scroll {
+        overflow: hidden;
+    }
+    
+    .user-detail-modal {
+        display: none !important;
+    }
+}

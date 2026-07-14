@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOIR — Streetwear Brand</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style-zevra.css">
+</head>
+<body>
+
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <img src="img/logozevra.png" alt="NOIR" class="preloader-logo">
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="logo-wrapper">
+            <img src="img/logozevra.png" alt="NOIR" class="logo-img">
+            <div class="logo-text">Определи свой стиль<br>с <span class="accent">ZEVRA</span></div>
+        </div>
+        <nav id="mainNav">
+            <a href="#home">Главная</a>
+            <a href="#catalog">Каталог</a>
+            <a href="#about">О нас</a>
+        </nav>
+        <div class="header-actions">
+            <button class="cart-btn" id="cartBtn" aria-label="Корзина">
+                <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+            <button class="menu-toggle" id="menuToggle" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <nav>
+            <a href="#home" class="mobile-link">Главная</a>
+            <a href="#catalog" class="mobile-link">Каталог</a>
+            <a href="#about" class="mobile-link">О нас</a>
+        </nav>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">Коллекция 2025</div>
+            <h1 class="hero-title">Определи свой<br>стиль с <span class="accent">ZEVRA</span></h1>
+            <p class="hero-subtitle">Уличная мода нового поколения — дерзкая, минималистичная, твоя</p>
+            <div class="hero-btns">
+                <a href="#catalog" class="btn-primary">Смотреть каталог</a>
+                <a href="#about" class="btn-secondary">О бренде</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Скролл</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="marquee-section">
+        <div class="marquee-track">
+            <div class="marquee-item"><span>Streetwear</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Premium Quality</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Limited Edition</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Urban Style</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Handcrafted</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Streetwear</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Premium Quality</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Limited Edition</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Urban Style</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Handcrafted</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Streetwear</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Premium Quality</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Limited Edition</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Urban Style</span><div class="dot"></div></div>
+            <div class="marquee-item"><span>Handcrafted</span><div class="dot"></div></div>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <section class="section products-section" id="catalog">
+        <div class="section-header reveal">
+            <span class="section-label">Каталог</span>
+            <h2 class="section-title">Наши модели</h2>
+            <p class="section-desc">Каждая вещь — это заявление. Минимализм, качество и характер в каждом шве.</p>
+        </div>
+        <div class="products-grid" id="productsGrid"></div>
+    </section>
+
+    <!-- Features -->
+    <section class="section features-section" id="about">
+        <div class="section-header reveal">
+            <span class="section-label">Почему мы</span>
+            <h2 class="section-title">Наш подход</h2>
+            <p class="section-desc">Мы создаём одежду, которая говорит за тебя</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card reveal">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                <h3 class="feature-title">Премиум материалы</h3>
+                <p class="feature-desc">Только лучшие ткани — хлопок премиум-класса, плотный трикотаж и качественные фурнитуры</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3 class="feature-title">Гарантия качества</h3>
+                <p class="feature-desc">Каждое изделие проходит строгий контроль качества перед отправкой покупателю</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 5 20 16 16 13 16 8"/></svg>
+                </div>
+                <h3 class="feature-title">Быстрая доставка</h3>
+                <p class="feature-desc">Отправляем заказы по всей России. Доставка от 1 до 3 рабочих дней</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </div>
+                <h3 class="feature-title">Поддержка 24/7</h3>
+                <p class="feature-desc">Наша команда всегда на связи и готова помочь с выбором размера или любым вопросом</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="section newsletter-section">
+        <div class="section-header reveal">
+            <span class="section-label">Будь в курсе</span>
+            <h2 class="section-title">Подпишись на рассылку</h2>
+            <p class="section-desc">Получай эксклюзивные предложения и узнавай о новых дропах первым</p>
+        </div>
+        <form class="newsletter-form reveal" id="newsletterForm">
+            <input type="email" placeholder="Твой email" required id="newsletterEmail">
+            <button type="submit">Подписаться</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <img src="img/logozevra.png" alt="NOIR" class="logo-img-footer">
+                <p>Уличная мода нового поколения. Мы создаём одежду для тех, кто не боится быть собой.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Telegram">
+                        <svg viewBox="0 0 24 24"><path d="M21.198 2.433a2.242 2.242 0 00-1.022.215l-8.609 3.33c-2.068.8-4.133 1.598-5.724 2.21a405.15 405.15 0 01-2.849 1.09c-.42.147-.99.332-1.473.901-.728.856.075 1.644.357 1.898.195.175 3.35 1.08 3.35 1.08l2.168.698c.273.089.584.089.856.001.273-.088 1.734-.569 1.734-.569l.724-.234 3.652 2.71c.392.292.846.406 1.298.332.452-.074.846-.344 1.138-.736l1.968-2.614c.292-.392.406-.846.332-1.298-.074-.452-.344-.846-.736-1.138l-2.71-3.652.234-.724s.481-1.461.569-1.734c.088-.273.088-.583-.001-.856L12.68 3.823c-.089-.273-.258-.516-.489-.689l2.168.698c.123.04.253.06.382.06.257 0 .513-.097.707-.29l7.129-7.129a.998.998 0 00.707-.29l1.527 1.527a.998.998 0 00.29.707l-7.129 7.129z"/></svg>
+                    </a>
+                    <a href="#" aria-label="VK">
+                        <svg viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.862-.525-2.049-1.714-1.033-1.01-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.12-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.678.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.204.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.253-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .643.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.049.17.474-.085.72-.576.72z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Магазин</h4>
+                <ul>
+                    <li><a href="#catalog">Все товары</a></li>
+                    <li><a href="#catalog">Новинки</a></li>
+                    <li><a href="#catalog">Бестселлеры</a></li>
+                    <li><a href="#catalog">Скидки</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Информация</h4>
+                <ul>
+                    <li><a href="#about">О бренде</a></li>
+                    <li><a href="#about">Доставка</a></li>
+                    <li><a href="#about">Возврат</a></li>
+                    <li><a href="#about">Размерная сетка</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Контакты</h4>
+                <ul>
+                    <li><a href="tel:+79991234567">+7 (999) 123-45-67</a></li>
+                    <li><a href="mailto:info@zevra-brand.ru">info@zevra-brand.ru</a></li>
+                    <li><a href="#">Telegram</a></li>
+                    <li><a href="#">WhatsApp</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 ZEVRA. Все права защищены.</p>
+            <div class="payment-methods">
+                <span>VISA</span>
+                <span>MC</span>
+                <span>МИР</span>
+                <span>СБП</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Корзина</h3>
+            <button class="cart-close" id="cartClose">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">
+                <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+                <p>Корзина пуста</p>
+                <span style="font-size:0.85rem; color: var(--gray);">Добавьте товары из каталога</span>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display:none;">
+            <div class="cart-total">
+                <span>Итого</span>
+                <span id="cartTotal">0 ₽</span>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn">Оформить заказ</button>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" id="modalClose">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="modal-image">
+                <img id="modalImg" src="" alt="">
+                <div class="modal-tag" id="modalTag"></div>
+            </div>
+            <div class="modal-content">
+                <div class="modal-category" id="modalCategory"></div>
+                <h2 class="modal-name" id="modalName"></h2>
+                <div class="modal-price-row">
+                    <span class="modal-price" id="modalPrice"></span>
+                    <span class="modal-price-old" id="modalPriceOld"></span>
+                </div>
+                <p class="modal-desc" id="modalDesc"></p>
+                <div class="modal-features">
+                    <div class="modal-feature">
+                        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                        <span>Премиум хлопок 240 г/м²</span>
+                    </div>
+                    <div class="modal-feature">
+                        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                        <span>Бесплатная доставка от 3000 ₽</span>
+                    </div>
+                    <div class="modal-feature">
+                        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                        <span>Гарантия возврата 14 дней</span>
+                    </div>
+                </div>
+                <div class="modal-sizes">
+                    <label>Размер</label>
+                    <div class="modal-size-options" id="modalSizes"></div>
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-add-btn" id="modalAddBtn">В корзину</button>
+                    <button class="modal-try-btn" onclick="showToast('Функция примерки онлайн скоро будет доступна!')">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/></svg>
+                        Примерить онлайн
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        <span id="toastText">Товар добавлен в корзину</span>
+    </div>
+    <div id="clozly-preview-wrapper" style="display: none;">
+        <button id="clozly-mobile-close" onclick="closeClozlyWidget()">&times;</button>
+        <div id="preview-container">
+            <iframe src="about:blank" id="tryon-preview-iframe"></iframe>
+        </div>
+    </div>
+    <script src="js/script-zevra.js"></script>
+</body>
+</html>

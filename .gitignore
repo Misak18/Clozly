@@ -1,0 +1,14 @@
+# Игнорируем картинки и метаданные
+img/
+metadata/
+
+# Полностью игнорируем всю папку со стилями scss
+scss/
+sprites/
+sprites-full/
+svgs/
+svgs-full/
+webfonts/
+# На случай зависимостей
+node_modules/
+.env

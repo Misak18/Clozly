@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Clozly.AI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Open+Sans:wght@400;600;700&display=swap');
+
+        :root {
+            --font-header: 'Dela Gothic One', sans-serif;
+            --font-main: 'Open Sans', sans-serif;
+            --accent: #49b7f7;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            /* Единый градиент: от черного к светло-синему */
+            background: linear-gradient(180deg, 
+                #020408 0%,    
+                #050c1f 50%,   
+                #2159b3 100%   
+            );
+            background-attachment: fixed;
+            color: #ffffff;
+            font-family: var(--font-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Карточка в стиле Glassmorphism */
+        .auth-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 45px 40px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .auth-card h1 {
+            font-family: var(--font-header);
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 35px;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(73, 183, 247, 0.15);
+        }
+
+        /* Кнопка с градиентом как на лендинге */
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #2864c8, #004696);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 70, 150, 0.5);
+            filter: brightness(1.1);
+        }
+
+/* Кнопка Telegram (теперь снизу формы) */
+.telegram-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.05); /* Прозрачный фон */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 20px; /* Отступ от кнопки "Войти" */
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.telegram-login:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.telegram-login img {
+    width: 22px;
+    height: 22px;
+}
+
+/* Контейнер для относительного позиционирования */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Настройка поля ввода: добавляем отступ справа для кнопки */
+.form-group input {
+    width: 100%;
+    padding: 15px 50px 15px 20px; /* 50px справа, чтобы текст не перекрывал иконку */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    color: #fff;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+/* Кнопка внутри инпута */
+.toggle-password-visibility {
+    position: absolute;
+    right: 15px; /* Отступ от правого края */
+    background: transparent; /* Прозрачный фон */
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.toggle-password-visibility:hover {
+    opacity: 1;
+}
+
+.toggle-password-visibility img {
+    width: 20px;
+    height: 20px;
+    /* Если иконка кажется белой, фильтр может сделать её чуть мягче, 
+       но по ссылке она и так светло-серая (#f1f1f1) */
+}
+
+/* Немного подправим футер, чтобы он не прилипал */
+.auth-footer {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+        .auth-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 35px 25px;
+            }
+            .auth-card h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h1>Вход</h1>
+        <div id="login-message" class="message-box"></div> 
+        <p class="auth-subtitle">Войдите в аккаунт управления</p>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label>Email или Телефон</label>
+                <input type="text" id="login-identifier" name="identifier" placeholder="example@mail.ru" required>
+            </div>
+
+            <div class="form-group">
+                <label>Пароль</label>
+                <div class="input-wrapper">
+                    <input type="password" id="login-password" name="password" placeholder="••••••••" required>
+                    <button type="button" class="toggle-password-visibility" id="toggle-password-login">
+                        <img src="https://img.icons8.com/material-outlined/24/f1f1f1/visible.png" alt="Показать" data-visible="false">
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Войти</button>
+        </form>
+        <a href="#" id="telegram-login-link" class="telegram-login">
+            <img src="https://img.icons8.com/color/24/telegram-app.png" alt="TG">
+            Войти через Telegram
+        </a>
+        <div class="auth-footer">
+            Нет аккаунта? <a href="register.html">Зарегистрироваться</a>
+        </div>
+    </div>
+</div>
+<script src="js/auth_client.js" type="module"></script>
+</body>
+</html>

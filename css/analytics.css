@@ -1,0 +1,1387 @@
+        /* ==================
+           1. CSS Переменные (ИЗ tarifs.html)
+           ================== */
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #4b90da;
+            --secondary-color: #6c757d;
+            --secondary-hover-color: #5a6268;
+            --background-color: #1a1a1a;
+            --card-background-color: #007bff; /* Фон карточек, как в тарифах */
+            --text-color: #f1f1f1;
+            --text-color-secondary: #c0c0c0;
+            --border-color: #4b90da;
+            --font-family: 'Roboto', sans-serif;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --gradient-color-1: rgb(40, 100, 200);   /* Светло-синий/Голубой */
+            --gradient-color-2: rgb(0, 70, 150);     /* Средне-синий */
+            --gradient-color-3: rgb(0, 40, 100);
+        }
+
+        /* ==================
+           2. Базовые стили (ИЗ tarifs.html)
+           ================== */
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow-x: hidden;
+            font-family: var(--font-family);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        body {
+            padding: 0;
+            background-color: var(--background-color); 
+        }
+
+/* =======================================
+       3. СТИЛИЗАЦИЯ КНОПОК
+       ======================================= */
+    .button {
+        /* Общие стили для всех кнопок */
+        padding: 8px 15px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        /* Дефолтный вид (например, темный фон для secondary) */
+        background-color: var(--card-background-color);
+        color: var(--text-color);
+        border-color: var(--border-color);
+    }
+
+    /* Primary Button (Синяя) */
+    .button.primary {
+        background-color: var(--primary-color);
+        color: var(--text-color); /* Белый/светлый текст */
+        border-color: var(--primary-color);
+    }
+
+    .button.primary:hover {
+        background-color: var(--primary-hover-color);
+        border-color: var(--primary-hover-color);
+    }
+
+    /* Secondary Button (для других целей, если потребуется) */
+    .button.secondary {
+        background-color: var(--secondary-color);
+        color: var(--text-color);
+        border-color: var(--secondary-color);
+    }
+
+    .button.secondary:hover {
+        background-color: var(--secondary-hover-color);
+        border-color: var(--secondary-hover-color);
+    }
+    
+    /* Small Button Variant (для таблиц и карточек) */
+    .button.small {
+        padding: 5px 10px;
+        font-size: 0.85em;
+    }
+        
+        /* Стили для контейнера хедера в тарифах */
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* ==================================
+        3. КРИТИЧЕСКИЕ СТИЛИ ДЛЯ CANVAS-ФОНА
+        ================================== */
+        #background-canvas {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100vw; 
+            height: 100vh; 
+            z-index: -1; 
+            pointer-events: none; 
+            display: block; 
+        }
+
+        /* ==================
+           4. Контейнер контента
+           ================== */
+        .analytics-container { 
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+            position: relative;
+            padding: 20px; 
+            box-sizing: border-box;
+        }
+        
+        .analytics-container h1 {
+            margin: 0 0 20px 0;
+            font-size: 2.5rem;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        /* ==================
+           5. Стили Кнопок
+           ================== */
+        .btn-primary {
+            background-color: var(--primary-color);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover-color);
+        }
+
+        .error-text {
+            color: #ff4d4d; /* Красный цвет для ошибок */
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        /* Кнопки Навигации (Табы) */
+        .analytics-nav-tabs {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 10px;
+        }
+
+        .analytics-nav-tabs button {
+            background-color: transparent; 
+            color: var(--text-color-secondary);
+            border: none;
+            border-bottom: 2px solid transparent; 
+            padding: 10px 15px;
+            border-radius: 0; 
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .analytics-nav-tabs button.active {
+            color: var(--primary-color); 
+            border-bottom-color: var(--primary-color);
+            font-weight: 700;
+            background-color: rgba(0, 123, 255, 0.1); 
+        }
+        
+        /* Кнопка "Добавить Товар" */
+        #add-product-btn {
+            margin-left: auto; 
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            font-weight: 700;
+            padding: 8px 15px;
+        }
+        
+        /* --- Карточки --- */
+        .main-card { 
+            background: linear-gradient(45deg, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3));
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+        
+        .main-card h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            display: flex;
+        }
+
+        .stat-cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            border-radius: 8px;
+            flex-grow: 1;
+            box-shadow: 0 2px 8px rgb(49, 113, 223);
+        }
+        
+        /* --- Таблицы и Графики (Исправлено) --- */
+        .table-container,
+        .product-list-container,
+        .chart-container {
+            display: block !important;
+            overflow-x: auto; 
+            padding: 0; 
+            border-radius: 8px; 
+            box-shadow: none; 
+            background-color: transparent; 
+        }
+        
+        /* Добавляем минимальную высоту для контейнера товаров, чтобы он не схлопывался */
+        .product-list-container {
+            min-height: 200px; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-container {
+             /* Дополнительный фон для контейнера графика, чтобы он отличался */
+            background-color: var(--background-color); 
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            height: 400px; 
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden; 
+            flex-shrink: 0; 
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #4b90da;
+        }
+
+        th {
+            background-color: #0056b3; 
+            color: #4b90da;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        
+        .product-image-preview {
+            max-width: 60px;
+            max-height: 60px;
+            width: auto;
+            height: auto;
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid #4b90da;
+        }
+        /* Новый стиль для сообщения о пустом состоянии */
+        .empty-state-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-color-secondary);
+            font-size: 1.2rem;
+            flex-grow: 1; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+/* ==================================================
+   МОДАЛЬНЫЕ ОКНА (Modal Window Styles)
+   ================================================== */
+
+/* 1. Общий контейнер модального окна */
+.modal {
+    position: fixed;
+    z-index: 1000000; /* Должен быть выше всех остальных элементов */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: linear-gradient(90deg, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3)); /* Темный полупрозрачный фон */
+    display: none; /* Изначально скрыт */
+    
+    /* Анимация: Плавное появление фона */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    
+    /* Позволяет прокручивать контент, если окно меньше экрана */
+    overflow-y: auto; 
+    padding: 20px 0; /* Добавляем небольшой отступ сверху/снизу для прокрутки */
+}
+
+/* 2. Стиль для ОТКРЫТОГО модального окна (для центрирования и видимости) */
+.modal.open {
+    display: flex; 
+    align-items: flex-start; /* Начинаем центрирование с верхней границы */
+    justify-content: center; /* Центрирование по горизонтали */
+    opacity: 1;
+}
+
+/* 3. Контейнер контента модального окна (сам "прямоугольник") */
+.modal-content {
+    background-color: var(--card-background-color);
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    width: 90%;
+    max-width: 550px; /* Увеличим для удобства */
+    box-shadow: 0 4px 20px var(--shadow-color);
+    position: relative;
+    margin: 50px auto; /* Обеспечивает начальный отступ сверху */
+    
+    /* Анимация: Плавное появление контента */
+    transform: translateY(-20px);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* 4. Анимация контента при ОТКРЫТИИ */
+.modal.open .modal-content {
+    transform: translateY(0); /* Возвращаем в нормальное положение */
+}
+
+/* 5. Кнопка закрытия */
+.close-button {
+    color: var(--text-color-secondary);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1; /* Для лучшего вертикального выравнивания */
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--text-color);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 6. Блокировка прокрутки фона, когда модальное окно открыто */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* 7. Общие стили для формы в модальном окне */
+.input-field {
+    width: 100%;
+    padding: 12px;
+    display: inline-block;
+    border-radius: 6px;
+    box-sizing: border-box;
+    background: linear-gradient(90deg, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3));
+    color: var(--text-color);
+    transition: border-color 0.3s;
+}
+
+.input-field:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.form-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+        
+        .close-btn {
+            color: var(--text-color-secondary);
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Стили для формы внутри модального окна */
+        .modal-content h2 {
+            margin-top: 0;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-color-secondary);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="file"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+        /* Файл: analytics.html (внутри тега <style>) */
+        .clickable-row {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .clickable-row:hover {
+            /* Используйте цвет фона карточек для подсветки */
+            background-color: var(--border-color); 
+        }
+        /* ⭐ НОВЫЙ СТИЛЬ: для фиксированной высоты и ползунка */
+        .scrollable-table-container {
+            max-height: 400px; /* Фиксированная максимальная высота */
+            overflow-y: auto; /* Добавляет вертикальный ползунок, если контента больше */
+            border: 1px solid var(--border-color); /* Опциональная граница для контейнера */
+            border-radius: 8px; /* Опциональное скругление */
+        }
+        /* Важно, чтобы таблица внутри контейнера не схлопывалась */
+        .scrollable-table-container table {
+            width: 100%;
+            /* Гарантируем, что шапка останется на месте при скролле (если нужно) */
+            /* position: sticky; top: 0; */ 
+        }
+
+        #statistics-section > :first-child,
+        #client-Tryon-section1 > :first-child
+#product-management-section > :first-child {
+    margin-top: 0 !important;
+    padding: 2%;
+}
+
+        .product-card-actions button:first-child {
+    margin-right: 10px !important; 
+}
+
+/* ⭐ ГАРАНТИРУЕМ ОТСТУП НА ПК (в таблице) ⭐ */
+.button-spaced {
+    margin-right: 10px !important; 
+}
+#management-products-table .button-spaced {
+    margin-right: 10px !important; 
+}
+
+/* По умолчанию скрываем контейнер карточек на ПК */
+.product-card-actions {
+    margin-top: auto; 
+    padding-top: 5px; /* ⭐ УМЕНЬШЕНО: Уменьшаем отступ сверху ⭐ */
+    border-top: none; /* ⭐ ИСПРАВЛЕНИЕ: Убираем разделительную линию/прямоугольник ⭐ */
+    display: flex; 
+    gap: 10px; /* ⭐ ПРОВЕРКА: Здесь должен быть отступ для моб. версии ⭐ */
+    /* Добавляем обтекание, если кнопки не помещаются в ряд */
+    flex-wrap: wrap; 
+}
+
+.product-card-actions button:first-child {
+    margin-right: 10px; /* ⭐ ИСПРАВЛЕНИЕ: Гарантируем отступ для моб. версии ⭐ */
+}
+
+/* ⭐ ИСПРАВЛЕНИЕ: Отступ для кнопок в таблице (ПК версия) ⭐ */
+.button-spaced {
+    margin-right: 10px !important; 
+}
+    .product-cards-grid {
+        display: none; 
+        grid-template-columns: 1fr; 
+        gap: 20px; 
+        padding: 20px 0;
+    }
+
+    /* Карточка товара */
+    .product-card {
+        background-color: #4b90da;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 8px var(--shadow-color);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Изображение товара (заглушка или img) */
+    .product-card-image {
+        width: 100%;
+        height: 150px; 
+        background-color: var(--background-color); 
+        border-radius: 4px;
+        margin-bottom: 15px;
+        object-fit: contain;
+        border: 1px solid var(--border-color);
+    }
+    
+    /* Имя товара */
+    .product-name-card {
+        font-size: 1.2em;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+    
+    /* Строка деталей (Категория, Примерки) */
+    .product-detail-line {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-top: 1px dashed var(--border-color);
+    }
+    
+    .product-detail-line:first-of-type {
+        border-top: none;
+    }
+    
+    .product-label-card {
+        font-weight: 400;
+        color: var(--text-color-secondary);
+        font-size: 0.9em;
+    }
+    
+    .product-value-card {
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 1em;
+    }
+
+    .button-spaced {
+        margin-right: 10px !important; /* !important для гарантии переопределения */
+    }
+    
+    /* По умолчанию скрываем контейнер карточек на ПК */
+    .product-cards-grid {
+        display: none; 
+        grid-template-columns: 1fr; 
+        gap: 20px; 
+        padding: 20px 0;
+    }
+
+    /* Контейнер для сетки */
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 200px - минимальная ширина карточки */
+        gap: 20px;
+        padding: 20px 0;
+    }
+
+    /* Стиль самой карточки (используется в product-management и top-liked-products) */
+    .product-card {
+        background-color: linear-gradient(45deg, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3));
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .product-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px var(--shadow-color);
+    }
+
+    /* ⭐ ИЗОБРАЖЕНИЕ ТОВАРА (РАЗМЕР 200x200px) ⭐ */
+    .product-card .product-image {
+        width: 100%; /* Изображение занимает 100% ширины контейнера */
+        max-width: 200px; /* Ограничиваем максимальный размер */
+        height: 200px; /* Фиксированная высота для квадратной формы */
+        object-fit: cover; /* Обрезка изображения для заполнения области */
+        border-radius: 6px;
+        margin-bottom: 10px;
+        border: 1px solid var(--border-color);
+    }
+
+    /* Стиль для бейджа ранга в Топ-товарах */
+    .product-card .rank-badge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 8px 0 8px 0;
+        font-weight: bold;
+        z-index: 10;
+        font-size: 1.1em;
+    }
+    
+    .product-card .product-stats {
+        margin-top: 5px;
+        font-size: 0.9em;
+        color: var(--text-color-secondary);
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .product-card .like-count {
+        color: #ff4500; /* Оранжево-красный для лайков */
+        font-weight: bold;
+    }
+        /* Общие исправления для контейнера */
+    .analytics-container {
+        padding: 20px; /* Меньший padding по краям */
+    }
+
+/* Контейнер кастомного селекта */
+.custom-select-wrapper {
+    position: relative;
+    user-select: none;
+    width: 100%;
+}
+
+/* Само поле (как твой .input-field) */
+.custom-select-trigger {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 6px;
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(5, 12, 31, 0.9), rgba(10, 20, 50, 0.85)) !important;
+    color: var(--text-color);
+    border: 1px solid transparent;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+/* Тот самый выпадающий список с градиентом */
+.custom-options {
+    position: absolute;
+    display: block;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border-radius: 6px;
+    margin-top: -10px;
+    background: linear-gradient(135deg, rgba(5, 12, 31, 0.9), rgba(10, 20, 50, 0.85)) !important;
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all 0.3s;
+}
+
+/* Когда список открыт */
+.custom-select-wrapper.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    transform: translateY(0);
+}
+
+/* Элементы списка */
+.custom-option {
+    padding: 12px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.custom-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Маскируем реальный селект, но оставляем его для работы формы */
+.input-field.hidden-select {
+    display: none;
+}
+
+/* Поле ввода цены (делаем его в стиле .input-field) */
+#product-price.modal-input,
+input[type="number"].input-group,
+input[type="text"].input-group {
+    width: 100%;
+    padding: 12px 16px;
+    margin: 8px 0 15px 0;
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    box-sizing: border-box;
+    
+    /* Твой фирменный градиент */
+    background: linear-gradient(90deg, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3));
+    
+    color: var(--text-color);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Убираем стрелочки у поля цены (Chrome, Safari, Edge, Opera) */
+#product-price::-webkit-outer-spin-button,
+#product-price::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Подсветка при клике на цену */
+#product-price:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(75, 144, 218, 0.5);
+    filter: brightness(1.1);
+}
+
+/* Уникальный стиль только для кнопок действий в модальных окнах */
+.clozly-action-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    
+    /* Твой фирменный градиент */
+    background: linear-gradient(135deg, var(--gradient-color-3), var(--gradient-color-1));
+    
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--font-family);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 70, 150, 0.4);
+    outline: none;
+}
+
+/* Эффекты при наведении только для этого класса */
+.clozly-action-btn:hover {
+    filter: brightness(1.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 70, 150, 0.6);
+}
+
+/* Эффект нажатия */
+.clozly-action-btn:active {
+    transform: translateY(0);
+}
+
+/* Спиннер внутри кнопки */
+.clozly-action-btn .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Контейнер для поля ввода (уже существующий класс .input-field) */
+.file-with-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px 10px !important; /* Немного уменьшим внутренний отступ для компактности */
+}
+
+/* Стили для самой картинки превью */
+.image-preview-slot img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    display: block;
+}
+
+/* Скрываем, если картинки нет */
+.image-preview-slot:empty {
+    display: none;
+}
+
+.file-input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    height: auto !important; /* Чтобы высота подстраивалась под картинку */
+    padding: 0px 12px !important;
+}
+
+/* Стилизация самого изображения */
+.edit-preview-container img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border-color, #4b90da);
+    display: block;
+}
+
+/* Скрываем пустой контейнер */
+.edit-preview-container:empty {
+    display: none;
+}
+
+/* Контейнер для иконки и тултипа */
+.info-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+/* Стиль кнопки "i" */
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    cursor: help;
+    transition: background-color 0.3s;
+}
+
+.info-icon:hover {
+    background-color: var(--primary-hover-color);
+}
+
+/* Скрытое по умолчанию мини-модальное окно (тултип) */
+.info-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    width: 250px;
+    background-color: var(--card-background-color);
+    color: var(--text-color);
+    text-align: left;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%; /* Появление сверху от иконки */
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+/* Заголовок внутри тултипа */
+.info-tooltip h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.info-tooltip p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Появление при наведении */
+.info-wrapper:hover .info-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Маленький треугольник снизу тултипа */
+.info-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--border-color) transparent transparent transparent;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+@media (max-width: 768px) {
+    
+        .table-container,
+        .product-list-container,
+        .scrollable-table-container { 
+            display: none !important; 
+        }
+        
+        /* 2. Показываем контейнер карточек на мобильных */
+        .product-cards-grid {
+            display: none; 
+        }
+
+    /* Общие исправления для контейнера */
+    .analytics-container {
+        padding: 20px; /* Меньший padding по краям */
+    }
+    
+    .analytics-container h1 {
+        font-size: 2rem; /* Уменьшаем заголовок */
+        text-align: center;
+    }
+
+    .file-with-preview {
+        flex-direction: column; /* Картинка падает вниз */
+        align-items: flex-start;
+        height: auto;
+    }
+
+    .file-input-wrapper {
+        flex-direction: column; 
+        align-items: flex-start;
+    }
+    .edit-preview-container img {
+        width: 70px;
+        height: 70px;
+        margin-top: 5px;
+    }
+    /* Адаптация карточек статистики */
+    .stat-cards {
+        flex-direction: column; /* Карточки статистики в один столбец */
+        gap: 15px;
+    }
+
+    .stat-card h3 {
+        font-size: 1.2rem; /* Уменьшаем заголовок карточки */
+    }
+    /* Адаптация основного контейнера карточек */
+    .main-card {
+        padding: 20px; /* Уменьшаем внутренние отступы */
+    }
+    
+    /* Адаптация модальных окон */
+    .modal-content {
+        width: 95%; /* Шире модальное окно на мобильных */
+        margin: 20px; /* Отступы от краев, чтобы не прилипало */
+        max-height: 90vh; /* Ограничиваем высоту */
+        overflow-y: auto; /* Добавляем скролл, если содержимое не помещается */
+    }
+    
+    /* Адаптация таблиц (для .scrollable-table-container это уже не нужно,
+       так как он настроен, но добавим для контроля) */
+    .scrollable-table-container {
+        max-height: 300px; /* Уменьшаем максимальную высоту скролла */
+    }
+
+    /* Убираем лишние скругления у таблицы на мобильных для лучшего вида */
+    table {
+        border-radius: 0;
+    }
+    
+    /* Более компактный вид строк таблицы */
+    th, td {
+        padding: 8px 10px; 
+        font-size: 0.8rem;
+    }
+}
+
+/* Стили для раздела истории примерок */
+#client-Tryon-section1 {
+    padding: 20px;
+    background-color: linear-gradient(90deg, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3));
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+#client-Tryon-section1 h2 {
+    color: var(--text-color);
+    margin-bottom: 20px;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+/* Контейнер для скролла на мобилках */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#tryon-logs-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+#tryon-logs-table th {
+    background-color: rgba(0, 123, 255, 0.2);
+    color: var(--primary-hover-color);
+    text-align: left;
+    padding: 12px 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+#tryon-logs-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Миниатюры изображений с жестким ограничением размера */
+.preview-thumb {
+    width: 60px;          /* Фиксированная ширина */
+    height: 80px;         /* Фиксированная высота */
+    object-fit: cover;    /* Обрезает лишнее, сохраняя пропорции */
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: block;       /* Убирает лишние отступы снизу */
+    margin: 0 auto;       /* Центрирует в ячейке */
+}
+
+/* Эффект при наведении (небольшое увеличение, не ломающее верстку) */
+.preview-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 10;
+}
+
+/* Стили для ячеек с картинками, чтобы они не растягивались */
+#tryon-logs-table td {   /* Ограничиваем ширину колонки с фото */
+    text-align: center;
+    padding: 8px;
+}
+
+/* Особый стиль для колонки результата, чтобы подчеркнуть её */
+.result-img {
+    border: 2px solid var(--primary-color);
+}
+
+
+
+/* Бейдж времени генерации */
+.badge-time {
+    background: rgba(0, 255, 127, 0.1);
+    color: #00ff7f;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+/* Кнопки действий (если появятся) */
+.btn-action {
+    background: none;
+    border: 1px solid var(--secondary-color);
+    color: var(--text-color-secondary);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-action:hover {
+    background: var(--secondary-color);
+    color: white;
+}
+
+/* Адаптивность для узких экранов */
+@media (max-width: 768px) {
+    #tryon-logs-table th, #tryon-logs-table td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    .preview-thumb {
+        width: 40px;
+        height: 55px;
+    }
+}
+
+/* Стили модального окна просмотра */
+#image-viewer-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9); /* Темный фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: zoom-out; /* Подсказка, что клик закроет */
+}
+
+.modal-content-wrapper {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+}
+
+#full-res-image {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    cursor: default; /* Внутри картинки курсор обычный */
+}
+
+#close-viewer {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 1001;
+}
+
+#close-viewer:hover {
+    color: var(--primary-color);
+    transform: scale(1.2);
+}
+
+/* Настройки для самого поля-кнопки */
+.file-upload-trigger {
+    display: flex !important; /* Перебиваем display: block из инлайн-стилей */
+    flex-direction: column;   /* Иконка встанет НАД текстом */
+    align-items: center;      /* Центрируем по горизонтали */
+    justify-content: center;  /* Центрируем по вертикали */
+    gap: 6px;                 /* Отступ между иконкой и текстом */
+    padding: 15px 10px;       /* Внутренние отступы, чтобы поле имело объем */
+    border-radius: 4px;       /* Скругление углов в тон остальным инпутам */
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Настройки размера SVG-иконки внутри этого поля */
+.upload-icon-field {
+    width: 24px;              /* Оптимальный размер иконки для формы */
+    height: 24px;
+    object-fit: contain;
+    opacity: 0.8;             /* Слегка приглушаем яркость в цвет текста */
+}
+
+/* Стили для текста внутри поля */
+#file-label-text {
+    font-size: 14px;          /* Делаем текст аккуратным */
+}
+
+
+/* ==========================================================================
+   Адаптивная сетка для Графика и Топа товаров
+   ========================================================================== */
+
+/* По умолчанию (для ПК и больших экранов) блоки стоят в один ряд */
+#chart-top-row-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 20px !important;
+    width: 100% !important;
+    align-items: stretch !important;
+    margin-top: 20px !important;
+    box-sizing: border-box;
+}
+
+/* На ПК график занимает 65% */
+#chart-top-row-wrapper #user-tryon-stats-container {
+    width: 65% !important;
+    min-width: 0 !important;
+    flex: 0 0 65% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* На ПК топ товаров занимает 35% */
+#chart-top-row-wrapper .section-container {
+    width: 35% !important;
+    min-width: 0 !important;
+    flex: 0 0 calc(35% - 20px) !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Контейнер для canvas графика */
+#user-tryon-chart-container {
+    width: 100% !important;
+    position: relative;
+}
+
+/* ==========================================================================
+   МОБИЛЬНАЯ ВЕРСИЯ (Экраны до 768px)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    #chart-top-row-wrapper {
+        flex-direction: column !important; /* Блоки встают друг под друга */
+        flex-wrap: wrap !important;
+        gap: 25px !important; /* Увеличиваем отступ между блоками для красоты */
+    }
+
+    /* На мобилках оба блока занимают 100% ширины */
+    #chart-top-row-wrapper #user-tryon-stats-container,
+    #chart-top-row-wrapper .section-container {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Корректируем высоту графика под мобильные, чтобы он не был слишком вытянутым */
+    #user-tryon-chart-container {
+        height: 300px !important; /* Уменьшаем высоту с 400px до 300px для мобилок */
+    }
+    
+    /* Адаптивность для таблицы "Топ товаров" на мобилке */
+    .data-table {
+        display: block;
+        overflow-x: auto; /* Появится горизонтальный скролл, если таблица не влезет */
+        white-space: nowrap;
+    }
+    
+    /* Стилизация блока выбора дат под мобильные устройства */
+    #user-custom-date-controls {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+    
+    #user-custom-date-controls input[type="date"],
+    #user-custom-date-controls button {
+        width: 100%; /* Элементы выбора дат растягиваются на всю ширину */
+        box-sizing: border-box;
+    }
+}
+
+/* Контейнер для выравнивания названия и надписи в столбик */
+.product-name-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Главное имя товара */
+.product-main-name {
+    font-weight: 500;
+}
+
+/* Контейнер для строки "по умолчанию (i)" */
+.default-badge-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em; /* Чуть меньше основного текста */
+}
+
+/* Голый текст "по умолчанию" */
+.default-text {
+    color: #49b7f7;
+    font-weight: normal;
+}
+
+/* Обертка для кнопки и самого поп-апа */
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Кнопка (i) */
+.tooltip-btn {
+    width: 16px;
+    height: 16px;
+    background-color: #49b7f7;
+    color: #000000; /* Черный цвет самой буквы i */
+    border: none;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: bold;
+    font-family: serif; /* Чтобы "i" выглядела элегантно */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+}
+
+/* Всплывающая маленькая подсказка */
+.tooltip-wrapper .tooltip-popup {
+    visibility: hidden;
+    width: 220px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%; /* Показывается строго НАД кнопкой */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    pointer-events: none; /* Чтобы не мешала мышке */
+}
+
+/* Маленькая стрелочка под подсказкой */
+.tooltip-wrapper .tooltip-popup::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+/* Логика для ПК: Показ при наведении мыши */
+@media (hover: hover) {
+    .tooltip-wrapper:hover .tooltip-popup {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+/* Логика для Мобилок: Класс активации при нажатии */
+.tooltip-wrapper.active .tooltip-popup {
+    visibility: visible;
+    opacity: 1;
+}
